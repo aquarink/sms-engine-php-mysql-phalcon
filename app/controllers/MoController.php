@@ -29,38 +29,30 @@ class MoController extends \Phalcon\Mvc\Controller {
 
             $sessionid = rand(1, 99999999);
 
-            $projectFolder = 'sms-engine-php-mysql-1';
-            $path = $_SERVER["DOCUMENT_ROOT"] . '/' . $projectFolder . '/filesystem/mo/';
+            $projectFolder = $_SERVER['DOCUMENT_ROOT'] . "/sms-engine-php-mysql-1";
+            //$projectFolder = '/var/www/html/engine';
+            
+            $path = $projectFolder . '/filesystem/mo/';
             $file = $path . $sessionid . '.txt';
 
             $content = $telco . '|' . $shortcode . '|' . $newMsisdn . '|' . $smsExpld[1] . '|' . $sms . '|' . $trxid . '|' . $trxdate . '|' . $sessionid . '|' . date('Y-m-d h:i:s') . '|' . $smsExpld[0];
 
             if (!file_exists($path)) {
                 mkdir($path, 0777, true);
-                //
-                $createFile = fopen($file, "w");
-                if ($createFile) {
-                    $fw = fwrite($createFile, $content);
-                    if ($fw) {
-                        echo 'Berhasil write Mo 1';
-                    } else {
-                        echo 'Gagal write Mo 1';
-                    }
+            }
+
+            chmod($path, 0777);
+
+            $createFile = fopen($file, "w");
+            if ($createFile) {
+                $fw = fwrite($createFile, $content);
+                if ($fw) {
+                    echo 'ok';
                 } else {
-                    echo 'Gagal open Mo 1';
+                    echo 'Gagal write Mo 2';
                 }
             } else {
-                $createFile = fopen($file, "w");
-                if ($createFile) {
-                    $fw = fwrite($createFile, $content);
-                    if ($fw) {
-                        echo 'Berhasil write Mo 2';
-                    } else {
-                        echo 'Gagal write Mo 2';
-                    }
-                } else {
-                    echo 'Gagal open Mo 2';
-                }
+                echo 'Gagal open Mo 2';
             }
         } else {
             echo 'Kosong';

@@ -27,39 +27,30 @@ class DrController extends \Phalcon\Mvc\Controller {
 
             $sessionid = rand(1, 99999999);
 
-            $projectFolder = 'sms-engine-php-mysql-1';
-            $path = $_SERVER["DOCUMENT_ROOT"] . '/' . $projectFolder . '/filesystem/dr/';
+            $projectFolder = $_SERVER['DOCUMENT_ROOT'] . "/sms-engine-php-mysql-1";
+            //$projectFolder = '/var/www/html/engine';
+
+            $path = $projectFolder . '/filesystem/dr/';
             $file = $path . $sessionid . '.txt';
 
             $content = $telco . '|' . $shortcode . '|' . $newMsisdn . '|' . $trxid . '|' . $trxdate . '|' . $sessionid . '|' . $status . '|' . date('Y-m-d h:i:s');
 
             if (!file_exists($path)) {
                 mkdir($path, 0777, true);
-                //
-                $createFile = fopen($file, "w");
-                if ($createFile) {
-                    $fw = fwrite($createFile, $content);
-                    if ($fw) {
-                        echo 'Berhasil write Dr 1';
-                    } else {
-                        echo 'Gagal write Dr 1';
-                    }
+            }
+
+            $createFile = fopen($file, "w");
+            if ($createFile) {
+                $fw = fwrite($createFile, $content);
+                if ($fw) {
+                    echo 'ok';
                 } else {
-                    echo 'Gagal open Dr 1';
+                    echo 'Gagal write Dr 2';
                 }
             } else {
-                $createFile = fopen($file, "w");
-                if ($createFile) {
-                    $fw = fwrite($createFile, $content);
-                    if ($fw) {
-                        echo 'Berhasil write Dr 2';
-                    } else {
-                        echo 'Gagal write Dr 2';
-                    }
-                } else {
-                    echo 'Gagal open Dr 2';
-                }
+                echo 'Gagal open Dr 2';
             }
+            chmod($path, 0777);
         } else {
             echo 'Kosong';
         }
