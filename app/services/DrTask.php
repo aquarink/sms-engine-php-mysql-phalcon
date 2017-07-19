@@ -8,7 +8,7 @@ class DrTask extends \Phalcon\CLI\Task {
     public function MainAction() {
         while (true) {
             try {
-                $path = 'sms-engine-php-mysql-1';
+                $path = getcwd();
                 //$path = '/var/www/html/engine';
 
                 $projectFolder = $path . '/filesystem/dr';
@@ -39,9 +39,6 @@ class DrTask extends \Phalcon\CLI\Task {
                                             )
                                     );
                                     if ($drLog->save()) {
-                                        // Close Read File
-                                        fclose($theFile);
-
                                         // Update tb_sms_push
                                         $updateQuery = "UPDATE tb_sms_push SET "
                                                 . "send_status = '$expldData[6]' WHERE "

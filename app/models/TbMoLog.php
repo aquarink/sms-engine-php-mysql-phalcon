@@ -87,7 +87,7 @@ class TbMoLog extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("new_sms_2");
+        $this->setSchema("new_sms_engine");
     }
 
     /**

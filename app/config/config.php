@@ -12,7 +12,7 @@ return new \Phalcon\Config([
         'host'        => 'localhost',
         'username'    => 'root',
         'password'    => '',
-        'dbname'      => 'new_sms_2',
+        'dbname'      => 'new_sms_engine',
         'charset'     => 'utf8',
     ],
     'application' => [
