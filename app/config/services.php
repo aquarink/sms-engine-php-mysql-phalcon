@@ -58,7 +58,7 @@ $di->setShared('view', function () {
 });
 
 /**
- * Database connection is created based in the parameters defined in the configuration file
+ * Database for generat sms engine
  */
 $di->setShared('db', function () {
     $config = $this->getConfig();
@@ -80,7 +80,6 @@ $di->setShared('db', function () {
 
     return $connection;
 });
-
 
 /**
  * If the configuration specify the use of metadata adapter use it or use memory otherwise

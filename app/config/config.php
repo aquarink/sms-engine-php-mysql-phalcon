@@ -15,6 +15,14 @@ return new \Phalcon\Config([
         'dbname'      => 'new_sms_engine',
         'charset'     => 'utf8',
     ],
+    'pushdb' => [
+        'adapter'     => 'Mysql',
+        'host'        => 'localhost',
+        'username'    => 'root',
+        'password'    => '',
+        'dbname'      => 'push_sms',
+        'charset'     => 'utf8',
+    ],
     'application' => [
         'appDir'         => APP_PATH . '/',
         'controllersDir' => APP_PATH . '/controllers/',

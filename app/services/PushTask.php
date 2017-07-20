@@ -21,6 +21,41 @@ class PushTask extends \Phalcon\CLI\Task {
 
                 $pushFolder = $path . '/filesystem/push/' . $telco;
 
+                $dateNow = date('Y_m_d');
+                $tableName = "tb_push_$dateNow";
+                $checkTable = "SHOW TABLES LIKE '$tableName'";
+
+                $ckTab = $this->smspush->query($checkTable);
+                $tableData = $ckTab->numRows();
+
+                if ($tableData == 0) {
+                    $createTable = "CREATE TABLE tb_push_$dateNow (
+                                id_push INT(11) NOT NULL AUTO_INCREMENT,
+                                telco VARCHAR(20) DEFAULT NULL,
+                                shortcode VARCHAR(20) DEFAULT NULL,
+                                msisdn VARCHAR(20) DEFAULT NULL,
+                                sms_field VARCHAR(200) DEFAULT NULL,
+                                keyword VARCHAR(100) DEFAULT NULL,
+                                content_number INT(11) DEFAULT NULL,
+                                content_field VARCHAR(200) DEFAULT NULL,
+                                trx_id VARCHAR(250) DEFAULT NULL,
+                                trx_date VARCHAR(20) DEFAULT NULL,
+                                session_id VARCHAR(100) DEFAULT NULL,
+                                session_date VARCHAR(20) DEFAULT NULL,
+                                reg_type VARCHAR(10) DEFAULT NULL,
+                                type VARCHAR(10) DEFAULT NULL,
+                                cost VARCHAR(10) DEFAULT NULL,
+                                send_status VARCHAR(10) DEFAULT NULL,
+                                response_code VARCHAR(10) DEFAULT NULL,
+                                subject VARCHAR(100) DEFAULT NULL,
+                                PRIMARY KEY (id_push)
+                                )";
+
+                    //echo $createTable;
+
+                    $createExe = $this->smspush->query($createTable);
+                }
+
                 if ($handle = opendir($pushFolder)) {
                     //Telco Config
                     $telcoQuery = "SELECT * FROM tb_telco_config WHERE "
@@ -83,37 +118,36 @@ class PushTask extends \Phalcon\CLI\Task {
 //                                    [14] => 1000
 //                                    [15] => 1
 //                                    [16] => subject
-//                                    
-//                                    
-                                    //if (unlink($pushFolder . "/" . $listFile[$offset])) {
-                                    $smsPush->assign(array(
-                                        'telco' => $expldData[0],
-                                        'shortcode' => $expldData[1],
-                                        'msisdn' => $expldData[2],
-                                        'sms_field' => $expldData[4],
-                                        'keyword' => $expldData[3],
-                                        'content_number' => $expldData[10],
-                                        'content_field' => $expldData[11],
-                                        'trx_id' => $responseArr['trxid'],
-                                        'trx_date' => $expldData[6],
-                                        'session_id' => $expldData[7],
-                                        'session_date' => $expldData[8],
-                                        'reg_type' => $expldData[9],
-                                        'type' => $expldData[13],
-                                        'cost' => $expldData[14],
-                                        'send_status' => $expldData[15],
-                                        'response_code' => $responseArr['error'],
-                                        'subject' => $expldData[16]
-                                            )
+
+
+                                    $smsPush = array(
+                                        'telco' => "'$expldData[0]'",
+                                        'shortcode' => "'$expldData[1]'",
+                                        'msisdn' => "'$expldData[2]'",
+                                        'sms_field' => "'$expldData[4]'",
+                                        'keyword' => "'$expldData[3]'",
+                                        'content_number' => "'$expldData[10]'",
+                                        'content_field' => "'$expldData[11]'",
+                                        'trx_id' => "'$responseArr[trxid]'",
+                                        'trx_date' => "'$expldData[6]'",
+                                        'session_id' => "'$expldData[7]'",
+                                        'session_date' => "'$expldData[8]'",
+                                        'reg_type' => "'$expldData[9]'",
+                                        'type' => "'$expldData[13]'",
+                                        'cost' => "'$expldData[14]'",
+                                        'send_status' => "'$expldData[15]'",
+                                        'response_code' => "'$responseArr[error]'",
+                                        'subject' => "'$expldData[16]'"
                                     );
-                                    if ($smsPush->save()) {
+
+                                    $querySave = "INSERT INTO $tableName ( " . implode(', ', array_keys($smsPush)) . ") VALUES (" . implode(', ', array_values($smsPush)) . ")";
+                                    $exeSave = $this->smspush->query($querySave);
+
+                                    if ($exeSave->numRows() > 0) {
                                         if (unlink($pushFolder . "/" . $listFile[$offset])) {
                                             echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - max - Success \n";
                                         }
                                     }
-                                    //}
-                                } elseif ($responseArr['error'] == 3) {
-                                    // Jika response error
                                 } else {
                                     // dan response error lainnya
                                 }
@@ -170,35 +204,34 @@ class PushTask extends \Phalcon\CLI\Task {
 //                                    [16] => subject   
 //                                    
 //                                                                                                      
-                                    //if (unlink($pushFolder . "/" . $listFile[$offset])) {
-                                    $smsPush->assign(array(
-                                        'telco' => $expldData[0],
-                                        'shortcode' => $expldData[1],
-                                        'msisdn' => $expldData[2],
-                                        'sms_field' => $expldData[4],
-                                        'keyword' => $expldData[3],
-                                        'content_number' => $expldData[10],
-                                        'content_field' => $expldData[11],
-                                        'trx_id' => $responseArr['trxid'],
-                                        'trx_date' => $expldData[6],
-                                        'session_id' => $expldData[7],
-                                        'session_date' => $expldData[8],
-                                        'reg_type' => $expldData[9],
-                                        'type' => $expldData[13],
-                                        'cost' => $expldData[14],
-                                        'send_status' => $expldData[15],
-                                        'response_code' => $responseArr['error'],
-                                        'subject' => $expldData[15]
-                                            )
+                                    $smsPush = array(
+                                        'telco' => "'$expldData[0]'",
+                                        'shortcode' => "'$expldData[1]'",
+                                        'msisdn' => "'$expldData[2]'",
+                                        'sms_field' => "'$expldData[4]'",
+                                        'keyword' => "'$expldData[3]'",
+                                        'content_number' => "'$expldData[10]'",
+                                        'content_field' => "'$expldData[11]'",
+                                        'trx_id' => "'$responseArr[trxid]'",
+                                        'trx_date' => "'$expldData[6]'",
+                                        'session_id' => "'$expldData[7]'",
+                                        'session_date' => "'$expldData[8]'",
+                                        'reg_type' => "'$expldData[9]'",
+                                        'type' => "'$expldData[13]'",
+                                        'cost' => "'$expldData[14]'",
+                                        'send_status' => "'$expldData[15]'",
+                                        'response_code' => "'$responseArr[error]'",
+                                        'subject' => "'$expldData[16]'"
                                     );
-                                    if ($smsPush->save()) {
+
+                                    $querySave = "INSERT INTO $tableName ( " . implode(', ', array_keys($smsPush)) . ") VALUES (" . implode(', ', array_values($smsPush)) . ")";
+                                    $exeSave = $this->smspush->query($querySave);
+
+                                    if ($exeSave->numRows() > 0) {
                                         if (unlink($pushFolder . "/" . $listFile[$offset])) {
                                             echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - min - Success \n";
                                         }
                                     }
-                                    //}
-                                } elseif ($responseArr['error'] == 3) {
-                                    // Jika response error
                                 } else {
                                     // dan response error lainnya
                                 }

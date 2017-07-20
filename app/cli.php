@@ -39,6 +39,15 @@ $di->set('db', function() use ($config) {
     ));
 });
 
+$di->set('smspush', function() use ($config) {
+    return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
+        "host" => $config->pushdb->host,
+        "username" => $config->pushdb->username,
+        "password" => $config->pushdb->password,
+        "dbname" => $config->pushdb->dbname
+    ));
+});
+
 //Create a console application
 $console = new ConsoleApp();
 $console->setDI($di);
