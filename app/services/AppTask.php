@@ -6,27 +6,27 @@ class AppTask extends \Phalcon\CLI\Task {
 
     // php app/cli.php mo
     public function MainAction() {
-        while (true) {
-            try {
-                $paths = getcwd();
-                //$paths = '/var/www/html/engine';
+        //while (true) {
+        try {
+            $paths = getcwd();
+            //$paths = '/var/www/html/engine';
 
-                $appSystem = $paths . '/appsystem';
-                if ($handle = opendir($appSystem)) {
-                    while (false !== ($entry = readdir($handle))) {
-                        if ($entry != '.' && $entry != '..') {
-                            include $appSystem . '/' . $entry;
-                        }
+            $appSystem = $paths . '/appsystem';
+            if ($handle = opendir($appSystem)) {
+                while (false !== ($entry = readdir($handle))) {
+                    if ($entry != '.' && $entry != '..') {
+                        include $appSystem . '/' . $entry;
                     }
-                    closedir($handle);
-                } else {
-                    echo date('Y-m-d h:i:s') . " : Error opendir \n";
                 }
-            } catch (\Exception $e) {
-                echo date('Y-m-d h:i:s') . " : Error try catch \n";
+                closedir($handle);
+            } else {
+                echo date('Y-m-d h:i:s') . " : Error opendir \n";
             }
-            sleep(1);
+        } catch (\Exception $e) {
+            echo date('Y-m-d h:i:s') . " : Error try catch \n";
         }
+        //sleep(1);
+        //}
     }
 
 }

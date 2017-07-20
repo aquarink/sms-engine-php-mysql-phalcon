@@ -1,6 +1,6 @@
 <?php
 
-class TbDrLog extends \Phalcon\Mvc\Model
+class TbDrToday extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -73,7 +73,7 @@ class TbDrLog extends \Phalcon\Mvc\Model
      */
     public function initialize()
     {
-        $this->setSchema("new_sms_engine");
+        $this->setSchema("smsgw_engine_log");
     }
 
     /**
@@ -83,14 +83,14 @@ class TbDrLog extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'tb_dr_log';
+        return 'tb_dr_today';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return TbDrLog[]|TbDrLog|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return TbDrToday[]|TbDrToday|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -101,7 +101,7 @@ class TbDrLog extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return TbDrLog|\Phalcon\Mvc\Model\ResultInterface
+     * @return TbDrToday|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {

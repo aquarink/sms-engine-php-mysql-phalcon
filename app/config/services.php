@@ -81,6 +81,27 @@ $di->setShared('db', function () {
     return $connection;
 });
 
+$di->setShared('dblog', function () {
+    $config = $this->getConfig();
+
+    $class = 'Phalcon\Db\Adapter\Pdo\\' . $config->log->adapter;
+    $params = [
+        'host'     => $config->log->host,
+        'username' => $config->log->username,
+        'password' => $config->log->password,
+        'dbname'   => $config->log->dbname,
+        'charset'  => $config->log->charset
+    ];
+
+    if ($config->log->adapter == 'Postgresql') {
+        unset($params['charset']);
+    }
+
+    $connection = new $class($params);
+
+    return $connection;
+});
+
 /**
  * If the configuration specify the use of metadata adapter use it or use memory otherwise
  */

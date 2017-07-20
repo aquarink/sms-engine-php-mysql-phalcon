@@ -33,7 +33,7 @@ try {
                             . "msisdn = '$expldData[2]' AND "
                             . "keyword = '$expldData[3]' "
                             . "ORDER BY id_push DESC LIMIT 1";
-                    $result = $this->smspush->query($checkQuery);
+                    $result = $this->dblog->query($checkQuery);
                     $smsPushData = $result->fetchAll();
 
                     $sessionRand = rand(1, 99999999);
@@ -46,10 +46,13 @@ try {
                     chmod($pathPush, 0777);
 
                     // Keyword Data
-                    $keywordQuery = "SELECT * FROM tb_keyword WHERE "
+                    $keywordQuery = "SELECT id_app FROM tb_keyword WHERE "
+                            . "telco = '$expldData[0]' AND "
+                            . "shortcode = '$expldData[1]' AND "
                             . "keyword = '$appName'";
                     $keywordResult = $this->db->query($keywordQuery);
                     $key = $keywordResult->fetchAll()[0];
+
 
                     // App Config
                     $appConfigQuery = "SELECT * FROM tb_app_config WHERE "
@@ -66,14 +69,13 @@ try {
                         //        . "content_number = '$contentSequence'";
                         //$contentResult = $this->db->query($contentQuery);
                         //$cntn = $contentResult->fetchAll()[0];
-
                         // seqNumber Reply regType pull/pushType cost statusSend
                         //$contentApp = $expldData[0] . '|' . $expldData[1] . '|' . $expldData[2] . '|' . $expldData[3] . '|' . $expldData[4] . '||' . $expldData[6] . '|' . $expldData[7] . '|' . $expldData[8] . '|' . $expldData[9] . '|' . $cntn['content_number'] . '|' . $cntn['content_field'] . '|1|pull|' . $appConfig['cost_pull'] . '|1|push;iod;' . $appName . ';dailypush';
                         $contentApp = $dataFiles . '|0|Welcome Message Karena reg 2x|1|pull|0|1|reg;iod;' . $appName;
                         $fileApp = $pathPush . '/' . $sessionRand . 'dua.txt';
                     } else {
                         $contentSequence = 1;
-                        $contentWelcome = $dataFiles . '|0|Welcome Message Karena reg 1x|1|pull|0|1|reg;iod;' . $appName;
+                        $contentWelcome = $dataFiles . '|0|Welcome Message reg 1x|1|pull|0|1|reg;iod;' . $appName;
                         $fileWelcome = $pathPush . '/' . $expldData[5] . 'satu.txt';
                         // Create App File
                         $createWelcome = fopen($fileWelcome, "w");
@@ -84,6 +86,7 @@ try {
                                 echo date('Y-m-d h:i:s') . " : Create Welcome Message \n";
                                 // Create  App Message
                                 $contentQuery = "SELECT * FROM tb_apps_content WHERE "
+                                        . "id_app = '$key[id_app]' AND "
                                         . "keyword = '$appName' AND "
                                         . "content_number = '$contentSequence'";
                                 $contentResult = $this->db->query($contentQuery);

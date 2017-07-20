@@ -39,12 +39,12 @@ $di->set('db', function() use ($config) {
     ));
 });
 
-$di->set('smspush', function() use ($config) {
+$di->set('dblog', function() use ($config) {
     return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
-        "host" => $config->pushdb->host,
-        "username" => $config->pushdb->username,
-        "password" => $config->pushdb->password,
-        "dbname" => $config->pushdb->dbname
+        "host" => $config->log->host,
+        "username" => $config->log->username,
+        "password" => $config->log->password,
+        "dbname" => $config->log->dbname
     ));
 });
 

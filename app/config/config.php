@@ -12,15 +12,15 @@ return new \Phalcon\Config([
         'host'        => 'localhost',
         'username'    => 'root',
         'password'    => '',
-        'dbname'      => 'new_sms_engine',
+        'dbname'      => 'smsgw_engine_db',
         'charset'     => 'utf8',
     ],
-    'pushdb' => [
+    'log' => [
         'adapter'     => 'Mysql',
         'host'        => 'localhost',
         'username'    => 'root',
         'password'    => '',
-        'dbname'      => 'push_sms',
+        'dbname'      => 'smsgw_engine_log',
         'charset'     => 'utf8',
     ],
     'application' => [

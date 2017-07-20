@@ -1,6 +1,6 @@
 <?php
 
-class TbSmsPush extends \Phalcon\Mvc\Model
+class TbMoSummary extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -10,7 +10,7 @@ class TbSmsPush extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $id_push;
+    public $id_mo;
 
     /**
      *
@@ -43,49 +43,35 @@ class TbSmsPush extends \Phalcon\Mvc\Model
     /**
      *
      * @var string
-     * @Column(type="string", length=100, nullable=true)
+     * @Column(type="string", length=50, nullable=true)
      */
     public $keyword;
 
     /**
      *
-     * @var integer
-     * @Column(type="integer", length=11, nullable=true)
-     */
-    public $content_number;
-
-    /**
-     *
      * @var string
-     * @Column(type="string", length=200, nullable=true)
-     */
-    public $content_field;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=100, nullable=true)
+     * @Column(type="string", length=50, nullable=true)
      */
     public $trx_id;
 
     /**
      *
      * @var string
-     * @Column(type="string", length=20, nullable=true)
+     * @Column(type="string", length=50, nullable=true)
      */
     public $trx_date;
 
     /**
      *
      * @var string
-     * @Column(type="string", length=100, nullable=true)
+     * @Column(type="string", length=50, nullable=true)
      */
     public $session_id;
 
     /**
      *
      * @var string
-     * @Column(type="string", length=20, nullable=true)
+     * @Column(type="string", length=50, nullable=true)
      */
     public $session_date;
 
@@ -97,32 +83,11 @@ class TbSmsPush extends \Phalcon\Mvc\Model
     public $reg_type;
 
     /**
-     *
-     * @var string
-     * @Column(type="string", length=10, nullable=true)
-     */
-    public $type;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=10, nullable=true)
-     */
-    public $cost;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=10, nullable=true)
-     */
-    public $send_status;
-
-    /**
      * Initialize method for model.
      */
     public function initialize()
     {
-        $this->setSchema("new_sms_engine");
+        $this->setSchema("smsgw_engine_log");
     }
 
     /**
@@ -132,14 +97,14 @@ class TbSmsPush extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'tb_sms_push';
+        return 'tb_mo_summary';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return TbSmsPush[]|TbSmsPush|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return TbMoSummary[]|TbMoSummary|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -150,7 +115,7 @@ class TbSmsPush extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return TbSmsPush|\Phalcon\Mvc\Model\ResultInterface
+     * @return TbMoSummary|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {

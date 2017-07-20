@@ -1,6 +1,6 @@
 <?php
 
-class TbMembers extends \Phalcon\Mvc\Model
+class TbTelcoConfig extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -10,56 +10,49 @@ class TbMembers extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $id_member;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=100, nullable=true)
-     */
-    public $telco;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=100, nullable=true)
-     */
-    public $shortcode;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=20, nullable=true)
-     */
-    public $msisdn;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=100, nullable=true)
-     */
-    public $app;
+    public $id_telco;
 
     /**
      *
      * @var string
      * @Column(type="string", length=50, nullable=true)
      */
-    public $join_date;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=10, nullable=true)
-     */
-    public $reg_types;
+    public $telco_name;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=11, nullable=true)
      */
-    public $content_seq;
+    public $push_limit;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=250, nullable=true)
+     */
+    public $address;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=100, nullable=true)
+     */
+    public $username;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=100, nullable=true)
+     */
+    public $password;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=100, nullable=true)
+     */
+    public $shortname;
 
     /**
      * Initialize method for model.
@@ -76,14 +69,14 @@ class TbMembers extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'tb_members';
+        return 'tb_telco_config';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return TbMembers[]|TbMembers|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return TbTelcoConfig[]|TbTelcoConfig|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -94,7 +87,7 @@ class TbMembers extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return TbMembers|\Phalcon\Mvc\Model\ResultInterface
+     * @return TbTelcoConfig|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {

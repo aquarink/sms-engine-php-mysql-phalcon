@@ -1,6 +1,6 @@
 <?php
 
-class TbMembers extends \Phalcon\Mvc\Model
+class TbAppConfig extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -10,56 +10,84 @@ class TbMembers extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $id_member;
+    public $id_app;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=200, nullable=true)
+     */
+    public $app_desc;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=20, nullable=true)
+     */
+    public $cost_pull;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=20, nullable=true)
+     */
+    public $cost_push;
 
     /**
      *
      * @var string
      * @Column(type="string", length=100, nullable=true)
      */
-    public $telco;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=100, nullable=true)
-     */
-    public $shortcode;
+    public $push_time;
 
     /**
      *
      * @var string
      * @Column(type="string", length=20, nullable=true)
      */
-    public $msisdn;
+    public $app_create;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=200, nullable=true)
+     */
+    public $partner;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=200, nullable=true)
+     */
+    public $contact;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=200, nullable=true)
+     */
+    public $marketing;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=200, nullable=true)
+     */
+    public $pic;
 
     /**
      *
      * @var string
      * @Column(type="string", length=100, nullable=true)
      */
-    public $app;
+    public $now_date;
 
     /**
      *
      * @var string
-     * @Column(type="string", length=50, nullable=true)
+     * @Column(type="string", length=20, nullable=true)
      */
-    public $join_date;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=10, nullable=true)
-     */
-    public $reg_types;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=11, nullable=true)
-     */
-    public $content_seq;
+    public $config_status;
 
     /**
      * Initialize method for model.
@@ -76,14 +104,14 @@ class TbMembers extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'tb_members';
+        return 'tb_app_config';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return TbMembers[]|TbMembers|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return TbAppConfig[]|TbAppConfig|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -94,7 +122,7 @@ class TbMembers extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return TbMembers|\Phalcon\Mvc\Model\ResultInterface
+     * @return TbAppConfig|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {
