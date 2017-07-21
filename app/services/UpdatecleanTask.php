@@ -6,6 +6,12 @@ class UpdatecleanTask extends \Phalcon\CLI\Task {
 
     public function MainAction() {
         $toDay = date('Y_m_d');
+        
+        
+        ///////////
+        // MO
+        ///////////
+        
 
         $tbMOToday = "SELECT * FROM tb_mo_today";
         $resultMOToday = $this->dblog->query($tbMOToday);
@@ -40,8 +46,8 @@ class UpdatecleanTask extends \Phalcon\CLI\Task {
                     . "(telco,shortcode,msisdn,sms_field,keyword,trx_id,trx_date,session_id,session_date,reg_type) "
                     . "VALUES ('" . $dMoT['telco'] . "','" . $dMoT['shortcode'] . "','" . $dMoT['msisdn'] . "','" . $dMoT['sms_field'] . "','" . $dMoT['keyword'] . "','" . $dMoT['trx_id'] . "','" . $dMoT['trx_date'] . "','" . $dMoT['session_id'] . "','" . $dMoT['session_date'] . "','" . $dMoT['reg_type'] . "')";
 
-            $savetoDate = $this->dblog->query($querySaveMo);
-            if ($savetoDate->numRows() > 0) {
+            $saveMotoDate = $this->dblog->query($querySaveMo);
+            if ($saveMotoDate->numRows() > 0) {
                 $queryDeleteMo = "DELETE FROM tb_mo_today WHERE id_mo = '" . $dMoT['id_mo'] . "'";
                 $deleteTbMoDate = $this->dblog->query($queryDeleteMo);
                 if ($deleteTbMoDate->numRows() > 0) {
@@ -49,8 +55,12 @@ class UpdatecleanTask extends \Phalcon\CLI\Task {
                 }
             }
         }
+        
 
         ///////////
+        // PUSH
+        ///////////
+        
 
         $tbPUSHToday = "SELECT * FROM tb_push_today";
         $resultPUSToday = $this->dblog->query($tbPUSHToday);
@@ -89,11 +99,11 @@ class UpdatecleanTask extends \Phalcon\CLI\Task {
 
         foreach ($dataPUSHToday as $dPushT) {
             $querySavePush = "INSERT INTO $tableNamePush "
-                    . "(telco,shortcode,msisdn,sms_field,keyword,trx_id,trx_date,session_id,session_date,reg_type) "
-                    . "VALUES ('" . $dMoT['telco'] . "','" . $dMoT['shortcode'] . "','" . $dMoT['msisdn'] . "','" . $dMoT['sms_field'] . "','" . $dMoT['keyword'] . "','" . $dMoT['trx_id'] . "','" . $dMoT['trx_date'] . "','" . $dMoT['session_id'] . "','" . $dMoT['session_date'] . "','" . $dMoT['reg_type'] . "')";
+                    . "(telco,shortcode,msisdn,sms_field,keyword,content_number,content_field,trx_id,trx_date,session_id,session_date,reg_type,type,send_status,response_code,subject) "
+                    . "VALUES ('" . $dPushT['telco'] . "','" . $dPushT['shortcode'] . "','" . $dPushT['msisdn'] . "','" . $dPushT['sms_field'] . "','" . $dPushT['keyword'] . "','" . $dPushT['content_number'] . "','" . $dPushT['content_field'] . "','" . $dPushT['trx_id'] . "','" . $dPushT['trx_date'] . "','" . $dPushT['session_id'] . "','" . $dPushT['session_date'] . "','" . $dPushT['reg_type'] . ",'" . $dPushT['type'] . "','" . $dPushT['send_status'] . "','" . $dPushT['response_code'] . ",'" . $dPushT['subject'] . "')";
 
-            $savetoDatePush = $this->dblog->query($querySaveMo);
-            if ($savetoDatePush->numRows() > 0) {
+            $savePushtoDatePush = $this->dblog->query($querySaveMo);
+            if ($savePushtoDatePush->numRows() > 0) {
                 $queryDeletePush = "DELETE FROM tb_push_today WHERE id_push = '" . $dPushT['id_push'] . "'";
                 $deleteTbPushDate = $this->dblog->query($queryDeletePush);
                 if ($deleteTbPushDate->numRows() > 0) {
@@ -103,13 +113,51 @@ class UpdatecleanTask extends \Phalcon\CLI\Task {
         }
 
 
-//        $tableMO = "tb_mo_$prevDay";
-//        $tablePUSH = "tb_push_$prevDay";
-//        $tableDR = "tb_dr_$prevDay";
-//
-//        $moveMO = "SELECT * FROM $tableMO";
-//        $resultMO = $this->dblog->query($moveMO);
-//        $dataMO = $resultMO->fetchAll();
+        ///////////
+        // DR
+        ///////////
+
+
+        $tbDRToday = "SELECT * FROM tb_dr_today";
+        $resultDRToday = $this->dblog->query($tbDRToday);
+        $dataDRToday = $resultDRToday->fetchAll();
+
+        $tableNameDr = "tb_dr_$toDay";
+        $checkTableDr = "SHOW TABLES LIKE '$tableNameDr'";
+
+        $ckTabDr = $this->dblog->query($checkTableDr);
+        $tableDataDr = $ckTabDr->numRows();
+
+        if ($tableDataDr == 0) {
+            $createTableDr = "CREATE TABLE $tableNameDr (
+                id_dr INT(11) NOT NULL AUTO_INCREMENT,
+                telco VARCHAR(20) DEFAULT NULL,
+                shortcode VARCHAR(20) DEFAULT NULL,
+                msisdn VARCHAR(20) DEFAULT NULL,
+                trx_id VARCHAR(50) DEFAULT NULL,
+                trx_date VARCHAR(50) DEFAULT NULL,
+                session_id VARCHAR(50) DEFAULT NULL,
+                session_date VARCHAR(50) DEFAULT NULL,
+                stat VARCHAR(10) DEFAULT NULL,
+                PRIMARY KEY (id_dr))";
+
+            $this->dblog->query($createTableDr);
+        }
+
+        foreach ($dataDRToday as $dDrT) {
+            $querySaveDr = "INSERT INTO $tableNameDr "
+                    . "(telco,shortcode,msisdn,trx_id,trx_date,session_id,session_date,stat) "
+                    . "VALUES ('" . $dDrT['telco'] . "','" . $dDrT['shortcode'] . "','" . $dDrT['msisdn'] . "','" . $dDrT['trx_id'] . "','" . $dDrT['trx_date'] . "','" . $dDrT['session_id'] . "','" . $dDrT['session_date'] . "','" . $dDrT['stat'] . "')";
+
+            $saveDrtoDate = $this->dblog->query($querySaveDr);
+            if ($saveDrtoDate->numRows() > 0) {
+                $queryDeleteDr = "DELETE FROM tb_dr_today WHERE id_dr = '" . $dDrT['id_dr'] . "'";
+                $deleteTbDrDate = $this->dblog->query($queryDeleteDr);
+                if ($deleteTbDrDate->numRows() > 0) {
+                    echo date('Y-m-d h:i:s') . " : Move tb_dr_today to $tableNameDr success \n";
+                }
+            }
+        }
     }
 
 }
