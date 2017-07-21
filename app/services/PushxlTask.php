@@ -13,7 +13,9 @@ class PushxlTask extends \Phalcon\CLI\Task {
             $path = getcwd();
             //$path = '/var/www/html/engine';
 
-            $pushFolder = $path . '/filesystem/push/' . $telco;
+            $pushTelcoFolder = $path . '/filesystem/push/' . $telco;
+            $pushFolder = $pushTelcoFolder . '/push';
+            $pullFolder = $pushTelcoFolder . '/pull';
 
             $dateNow = date('Y_m_d');
             $tableName = "tb_push_today";
@@ -29,6 +31,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                 shortcode VARCHAR(20) DEFAULT NULL,
                                 msisdn VARCHAR(20) DEFAULT NULL,
                                 sms_field VARCHAR(200) DEFAULT NULL,
+                                id_app INT(11) DEFAULT NULL,
                                 keyword VARCHAR(100) DEFAULT NULL,
                                 content_number INT(11) DEFAULT NULL,
                                 content_field VARCHAR(200) DEFAULT NULL,
@@ -49,19 +52,29 @@ class PushxlTask extends \Phalcon\CLI\Task {
                 $createExe = $this->dblog->query($createTable);
             }
 
-            if ($handle = opendir($pushFolder)) {
-                //Telco Config
-                $telcoQuery = "SELECT * FROM tb_telco_config WHERE "
-                        . "telco_name = '$telco'"
-                        . "ORDER BY id_telco DESC LIMIT 1";
-                $result = $this->db->query($telcoQuery);
-                $telcoConfig = $result->fetchAll()[0];
+            //Telco Config
+            $telcoQuery = "SELECT * FROM tb_telco_config WHERE "
+                    . "telco_name = '$telco'"
+                    . "ORDER BY id_telco DESC LIMIT 1";
+            $result = $this->db->query($telcoQuery);
+            $telcoConfig = $result->fetchAll()[0];
 
+            $a = scandir($pushTelcoFolder . '/pull');
+            $b = array_splice($a, 2);
+            $pullLimit = $telcoConfig['pull_limit'];
+
+            if ($b == 0) {
+                $pushLimit = $telcoConfig['push_limit'] + $pullLimit;
+            } else {
+                $pushLimit = $telcoConfig['push_limit'];
+            }
+
+            if ($handle = opendir($pushFolder)) {
                 // Read File Limit
                 $filesArr = scandir($pushFolder);
                 $listFile = array_splice($filesArr, 2);
 
-                if (count($listFile) <= $telcoConfig['push_limit']) {
+                if (count($listFile) <= $pushLimit) {
                     for ($offset = 0; $offset < count($listFile); $offset++) {
 
                         // Read File
@@ -113,12 +126,14 @@ class PushxlTask extends \Phalcon\CLI\Task {
 //                            [14] => 1000
 //                            [15] => 1
 //                            [16] => subject
+//                            [17] => id_app
 
                             $smsPush = array(
                                 'telco' => "'$expldData[0]'",
                                 'shortcode' => "'$expldData[1]'",
                                 'msisdn' => "'$expldData[2]'",
                                 'sms_field' => "'$expldData[4]'",
+                                'id_app' => "'$expldData[17]'",
                                 'keyword' => "'$expldData[3]'",
                                 'content_number' => "'$expldData[10]'",
                                 'content_field' => "'$expldData[11]'",
@@ -140,7 +155,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                             if ($exeSave->numRows() > 0) {
                                 if ($resCode == 0) {
                                     if (unlink($pushFolder . "/" . $listFile[$offset])) {
-                                        echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - code 0 max - Success \n";
+                                        echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - code 0 max - 1111 Success \n";
                                     }
                                 } else {
                                     // dan response error lainnya
@@ -154,7 +169,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                         mkdir($reTryPath, 0777, true);
                                     }
 
-                                    chmod($path, 0777);
+                                    chmod($reTryPath, 0777);
 
                                     $createReTryFile = fopen($reFile, "w");
                                     if ($createReTryFile) {
@@ -162,7 +177,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                         if ($ReTryfw) {
                                             fclose($createReTryFile);
                                             if (unlink($pushFolder . "/" . $listFile[$offset])) {
-                                                echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - code else 0 max - Success \n";
+                                                echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - code else 0 max - 2222 Success \n";
                                             }
                                         }
                                     }
@@ -171,7 +186,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                         }
                     }
                 } else {
-                    for ($offset = 0; $offset < $telcoConfig['push_limit']; $offset++) {
+                    for ($offset = 0; $offset < $pushLimit; $offset++) {
                         // Read File
                         $theFile = fopen($pushFolder . "/" . $listFile[$offset], "r");
                         $dataFile = fread($theFile, filesize($pushFolder . "/" . $listFile[$offset]));
@@ -221,12 +236,14 @@ class PushxlTask extends \Phalcon\CLI\Task {
 //                            [14] => 1000
 //                            [15] => 1
 //                            [16] => subject
+//                            [17] => id app
 
                             $smsPush = array(
                                 'telco' => "'$expldData[0]'",
                                 'shortcode' => "'$expldData[1]'",
                                 'msisdn' => "'$expldData[2]'",
                                 'sms_field' => "'$expldData[4]'",
+                                'id_app' => "'$expldData[17]'",
                                 'keyword' => "'$expldData[3]'",
                                 'content_number' => "'$expldData[10]'",
                                 'content_field' => "'$expldData[11]'",
@@ -248,7 +265,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                             if ($exeSave->numRows() > 0) {
                                 if ($resCode == 0) {
                                     if (unlink($pushFolder . "/" . $listFile[$offset])) {
-                                        echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - code 0 min - Success \n";
+                                        echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - code 0 min - 3333 Success \n";
                                     }
                                 } else {
                                     // dan response error lainnya
@@ -270,7 +287,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                         if ($ReTryfw) {
                                             fclose($createReTryFile);
                                             if (unlink($pushFolder . "/" . $listFile[$offset])) {
-                                                echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - code else 0 min - Success \n";
+                                                echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - code else 0 min - 4444 Success \n";
                                             }
                                         }
                                     }
@@ -280,6 +297,240 @@ class PushxlTask extends \Phalcon\CLI\Task {
                     }
                 }
                 closedir($handle);
+            }
+
+            //
+            // PULL PROSESS
+            //
+            
+            if ($handlePull = opendir($pullFolder)) {
+                // Read File Limit
+                $filesArrPull = scandir($pullFolder);
+                $listFilePull = array_splice($filesArrPull, 2);
+
+                if (count($listFilePull) <= $pullLimit) {
+                    for ($offsetPull = 0; $offsetPull < count($listFilePull); $offsetPull++) {
+
+                        // Read File
+                        $theFilePull = fopen($pullFolder . "/" . $listFilePull[$offsetPull], "r");
+                        $dataFilePull = fread($theFilePull, filesize($pullFolder . "/" . $listFilePull[$offsetPull]));
+                        $expldDataPull = explode("|", $dataFilePull);
+
+                        fclose($theFilePull);
+                        if ($theFilePull) {
+                            $optionsPull = array(
+                                "username" => $telcoConfig['username'],
+                                "password" => $telcoConfig['password'],
+                                "shortcode" => $expldDataPull[1],
+                                "msisdn" => $expldDataPull[2],
+                                "trxid" => $expldDataPull[5],
+                                "serviceId" => $expldDataPull[14],
+                                "sms" => $expldDataPull[11],
+                                "shortname" => "1234567890");
+
+                            $hostPull = $telcoConfig['address'] . '?';
+                            $hostPull .= http_build_query($optionsPull, '', '&');
+
+                            $optsPull = array('http' => array('header' => "User-Agent:Mozilla/5.0 (Windows NT 6.2) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.75 Safari/537.1\r\n"));
+                            $contextPull = stream_context_create($optsPull);
+                            $postResultPull = file_get_contents($hostPull, false, $contextPull);
+
+                            $xmlPull = simplexml_load_string($postResultPull);
+                            $jsonPull = json_encode($xmlPull);
+                            $configDataPull = json_decode($jsonPull, true);
+
+                            $resCodePull = $configDataPull['error']['@attributes']['code'];
+                            $resTxridPull = $configDataPull['trxid']['@attributes']['id'];
+
+                            // Insert
+//                            [0] => xl
+//                            [1] => 912345
+//                            [2] => 6285966655261
+//                            [3] => bola
+//                            [4] => reg bola
+//                            [5] =>
+//                            [6] => 2017-07-03
+//                            [7] => 535079 // session date
+//                            [8] => 2017-07-18 10:41:33
+//                            [9] => reg
+//                            [10] => 2
+//                            [11] => Reply Bola Kedua
+//                            [12] => 1
+//                            [13] => pull
+//                            [14] => 1000
+//                            [15] => 1
+//                            [16] => subject
+//                            [17] => id_app
+
+                            $smsPull = array(
+                                'telco' => "'$expldDataPull[0]'",
+                                'shortcode' => "'$expldDataPull[1]'",
+                                'msisdn' => "'$expldDataPull[2]'",
+                                'sms_field' => "'$expldDataPull[4]'",
+                                'id_app' => "'$expldDataPull[17]'",
+                                'keyword' => "'$expldDataPull[3]'",
+                                'content_number' => "'$expldDataPull[10]'",
+                                'content_field' => "'$expldDataPull[11]'",
+                                'trx_id' => "'$resTxridPull'",
+                                'trx_date' => "'$expldDataPull[6]'",
+                                'session_id' => "'$expldDataPull[7]'",
+                                'session_date' => "'$expldDataPull[8]'",
+                                'reg_type' => "'$expldDataPull[9]'",
+                                'type' => "'$expldDataPull[13]'",
+                                'cost' => "'$expldDataPull[14]'",
+                                'send_status' => "'$expldDataPull[15]'",
+                                'response_code' => "'$resCodePull'",
+                                'subject' => "'$expldDataPull[16]'"
+                            );
+
+                            $querySavePull = "INSERT INTO $tableName ( " . implode(', ', array_keys($smsPull)) . ") VALUES (" . implode(', ', array_values($smsPull)) . ")";
+                            $exeSavePull = $this->dblog->query($querySavePull);
+
+                            if ($exeSavePull->numRows() > 0) {
+                                if ($resCodePull == 0) {
+                                    if (unlink($pullFolder . "/" . $listFilePull[$offsetPull])) {
+                                        echo date('Y-m-d h:i:s') . " : Push to telco, Insert Pull Data & DR File Unlink - code 0 max - 5555 Success \n";
+                                    }
+                                } else {
+                                    // dan response error lainnya
+                                    $sessionidPull = rand(1, 99999999);
+                                    $reTryPathPull = $path . '/filesystem/retry/' . $telco . '/';
+                                    $reFilePull = $reTryPathPull . $sessionidPull . '-retry.txt';
+
+                                    $reContentPull = implode('|', array_values($expldDataPull)) . ';RETRY1';
+
+                                    if (!file_exists($reTryPathPull)) {
+                                        mkdir($reTryPathPull, 0777, true);
+                                    }
+
+                                    chmod($reTryPathPull, 0777);
+
+                                    $createReTryFilePull = fopen($reFilePull, "w");
+                                    if ($createReTryFilePull) {
+                                        $ReTryfwPull = fwrite($createReTryFilePull, $reContentPull);
+                                        if ($ReTryfwPull) {
+                                            fclose($createReTryFilePull);
+                                            if (unlink($pullFolder . "/" . $listFilePull[$offsetPull])) {
+                                                echo date('Y-m-d h:i:s') . " : Push to telco, Insert Pull Data & DR File Unlink - code else 0 max - 6666 Success \n";
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    for ($offsetPull = 0; $offsetPull < $pullLimit; $offsetPull++) {
+                        // Read File
+                        $theFilePull = fopen($pullFolder . "/" . $listFilePull[$offsetPull], "r");
+                        $dataFilePull = fread($theFilePull, filesize($pullFolder . "/" . $listFilePull[$offsetPull]));
+                        $expldDataPull = explode("|", $dataFilePull);
+
+                        fclose($theFilePull);
+                        if ($theFilePull) {
+                            $optionsPull = array(
+                                "username" => $telcoConfig['username'],
+                                "password" => $telcoConfig['password'],
+                                "shortcode" => $expldDataPull[1],
+                                "msisdn" => $expldDataPull[2],
+                                "trxid" => $expldDataPull[5],
+                                "serviceId" => $expldDataPull[14],
+                                "sms" => $expldDataPull[11],
+                                "shortname" => "1234567890");
+
+                            $hosPullt = $telcoConfigPull['address'] . '?';
+                            $hostPull .= http_build_query($optionsPull, '', '&');
+
+                            $optsPull = array('http' => array('header' => "User-Agent:Mozilla/5.0 (Windows NT 6.2) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.75 Safari/537.1\r\n"));
+                            $contextPull = stream_context_create($opts);
+                            $postResultPull = file_get_contents($hostPull, false, $contextPull);
+
+                            $xmlPull = simplexml_load_string($postResultPull);
+                            $jsonPull = json_encode($xmlPull);
+                            $configDataPull = json_decode($jsonPull, true);
+
+                            $resCodePull = $configDataPull['error']['@attributes']['code'];
+                            $resTxridPull = $configDataPull['trxid']['@attributes']['id'];
+
+                            // Insert
+//                            [0] => xl
+//                            [1] => 912345
+//                            [2] => 6285966655261
+//                            [3] => bola
+//                            [4] => reg bola
+//                            [5] =>
+//                            [6] => 2017-07-03
+//                            [7] => 535079 // session date
+//                            [8] => 2017-07-18 10:41:33
+//                            [9] => reg
+//                            [10] => 2
+//                            [11] => Reply Bola Kedua
+//                            [12] => 1
+//                            [13] => pull
+//                            [14] => 1000
+//                            [15] => 1
+//                            [16] => subject
+//                            [17] => id app
+
+                            $smsPull = array(
+                                'telco' => "'$expldDataPull[0]'",
+                                'shortcode' => "'$expldDataPull[1]'",
+                                'msisdn' => "'$expldDataPull[2]'",
+                                'sms_field' => "'$expldDataPull[4]'",
+                                'id_app' => "'$expldDataPull[17]'",
+                                'keyword' => "'$expldDataPull[3]'",
+                                'content_number' => "'$expldDataPull[10]'",
+                                'content_field' => "'$expldDataPull[11]'",
+                                'trx_id' => "'$resTxridPull'",
+                                'trx_date' => "'$expldDataPull[6]'",
+                                'session_id' => "'$expldDataPull[7]'",
+                                'session_date' => "'$expldDataPull[8]'",
+                                'reg_type' => "'$expldDataPull[9]'",
+                                'type' => "'$expldDataPull[13]'",
+                                'cost' => "'$expldDataPull[14]'",
+                                'send_status' => "'$expldDataPull[15]'",
+                                'response_code' => "'$resCodePull'",
+                                'subject' => "'$expldDataPull[16]'"
+                            );
+
+                            $querySavePull = "INSERT INTO $tableName ( " . implode(', ', array_keys($smsPull)) . ") VALUES (" . implode(', ', array_values($smsPull)) . ")";
+                            $exeSavePull = $this->dblog->query($querySavePull);
+
+                            if ($exeSave->numRows() > 0) {
+                                if ($resCode == 0) {
+                                    if (unlink($pullFolder . "/" . $listFile[$offset])) {
+                                        echo date('Y-m-d h:i:s') . " : Push to telco, Insert Pull Data & DR File Unlink - code 0 min - 7777 Success \n";
+                                    }
+                                } else {
+                                    // dan response error lainnya
+                                    $sessionidPull = rand(1, 99999999);
+                                    $reTryPathPull = $path . '/filesystem/retry/' . $telco . '/';
+                                    $reFilePull = $reTryPathPull . $sessionidPull . '-retry.txt';
+
+                                    $reContentPull = implode('|', array_values($expldDataPull)) . ';RETRY1';
+
+                                    if (!file_exists($reTryPathPull)) {
+                                        mkdir($reTryPathPull, 0777, true);
+                                    }
+
+                                    chmod($reTryPathPull, 0777);
+
+                                    $createReTryFilePull = fopen($reFilePull, "w");
+                                    if ($createReTryFilePull) {
+                                        $ReTryfwPull = fwrite($createReTryFilePull, $reContentPull);
+                                        if ($ReTryfwPull) {
+                                            fclose($createReTryFilePull);
+                                            if (unlink($pullFolder . "/" . $listFilePull[$offsetPull])) {
+                                                echo date('Y-m-d h:i:s') . " : Push to telco, Insert Pull Data & DR File Unlink - code else 0 min - 8888 Success \n";
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                closedir($handlePull);
             }
         } catch (\Exception $e) {
             echo date('Y-m-d h:i:s') . " : Error try catch $e \n";

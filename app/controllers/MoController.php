@@ -26,6 +26,14 @@ class MoController extends \Phalcon\Mvc\Controller {
             }
 
             $smsExpld = explode(' ', $sms);
+            
+            if(strtolower($smsExpld[0]) == 'reg') {
+                $sataus = 'reg';
+                $keyword = $smsExpld[1];
+            } else {
+                $sataus = '';
+                $keyword = $smsExpld[0];
+            }
 
             $sessionid = rand(1, 99999999);
 
@@ -35,7 +43,7 @@ class MoController extends \Phalcon\Mvc\Controller {
             $path = $projectFolder . '/filesystem/mo/';
             $file = $path . $sessionid . '.txt';
 
-            $content = $telco . '|' . $shortcode . '|' . $newMsisdn . '|' . $smsExpld[1] . '|' . $sms . '|' . $trxid . '|' . $trxdate . '|' . $sessionid . '|' . date('Y-m-d h:i:s') . '|' . $smsExpld[0];
+            $content = $telco . '|' . $shortcode . '|' . $newMsisdn . '|' . $keyword . '|' . $sms . '|' . $trxid . '|' . $trxdate . '|' . $sessionid . '|' . date('Y-m-d h:i:s') . '|' . $sataus;
 
             if (!file_exists($path)) {
                 mkdir($path, 0777, true);

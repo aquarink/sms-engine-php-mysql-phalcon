@@ -34,7 +34,7 @@ class MoTask extends \Phalcon\CLI\Task {
 //                                [6] => 2017-05-12
 //                                [7] => 67396126
 //                                [8] => 2017-07-19 01:01:58
-//                                [9] => reg
+//                                [9] => reg / non-reg
 
                                 $member = new TbMembers();
                                 $moLog = new TbMoToday();
@@ -43,7 +43,7 @@ class MoTask extends \Phalcon\CLI\Task {
                                         . "telco = '$expldData[0]' AND "
                                         . "shortcode = '$expldData[1]' AND "
                                         . "msisdn = '$expldData[2]' AND "
-                                        . "app = '$expldData[3]' AND "
+                                        . "keyword = '$expldData[3]' AND "
                                         . "reg_types = '$expldData[9]'";
                                 $result = $this->db->query($checkQuery);
 
@@ -55,6 +55,7 @@ class MoTask extends \Phalcon\CLI\Task {
                                         . "keyword = '$expldData[3]'";
                                 $keywordResult = $this->db->query($keywordQuery);
                                 $key = $keywordResult->numRows();
+
 
                                 if ($key > 0) {
                                     // Ada keyword
@@ -74,7 +75,8 @@ class MoTask extends \Phalcon\CLI\Task {
                                                 'telco' => $expldData[0],
                                                 'shortcode' => $expldData[1],
                                                 'msisdn' => $expldData[2],
-                                                'app' => $expldData[3],
+                                                'id_app' => $keywordResult->fetchAll()[0]['id_app'],
+                                                'keyword' => $expldData[3],
                                                 'join_date' => $expldData[8],
                                                 'reg_types' => $expldData[9],
                                                     )
@@ -137,7 +139,7 @@ class MoTask extends \Phalcon\CLI\Task {
                                         . "telco = '$expldData[0]' AND "
                                         . "shortcode = '$expldData[1]' AND "
                                         . "msisdn = '$expldData[2]' AND "
-                                        . "app = '$expldData[3]";
+                                        . "keyword = '$expldData[3]";
                                 $result = $this->db->query($updateQuery);
                                 if ($result->numRows() > 0) {
                                     if (unlink($projectFolder . "/" . $entry)) {
