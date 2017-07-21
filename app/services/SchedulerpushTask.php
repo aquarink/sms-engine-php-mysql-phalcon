@@ -56,9 +56,25 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                                             //SessionDate
                                             $sessionDate = date("Y-m-d h:i:s");
 
-                                            $content = $memData['telco'] . "|" . $memData['shortcode'] . "|" . $memData['msisdn'] . "|" . $memData['keyword'] . "|reg " . $memData['keyword'] . "||" . $nowDate . "|" . $sessionid . "|" . $sessionDate . "|reg|" . $cntent['content_number'] . "|" . $cntent['content_field'] . "|1|push|" . $appConfData['cost_push'] . "|1|PUSH;IOD;" . strtoupper($memData['keyword']) . ";DAILYPUSH|" . $appConfData['id_app'];
+                                            $contentPush = $memData['telco'] . "|" . $memData['shortcode'] . "|" . $memData['msisdn'] . "|" . $memData['keyword'] . "|DAILY PUSH " . strtoupper($memData['keyword']) . "||" . $nowDate . "|" . $sessionid . "|" . $sessionDate . "|reg|" . $cntent['content_number'] . "|" . $cntent['content_field'] . "|1|push|" . $appConfData['cost_push'] . "|1|PUSH;IOD;" . strtoupper($memData['keyword']) . ";DAILYPUSH|" . $appConfData['id_app'];
 
-                                            echo $content;
+                                            $pushTelco = $pushFolder . '/' . $memData['telco'] . '/push';
+
+                                            if (!file_exists($pushTelco)) {
+                                                mkdir($pushTelco, 0777, true);
+                                            }
+
+                                            chmod($pushTelco, 0777);
+
+                                            $filePush = $pushTelco . '/daily-push-' . $sessionid . '.txt';
+
+                                            $createFilePush = fopen($filePush, "w");
+                                            if ($createFilePush) {
+                                                $fwPush = fwrite($createFilePush, $contentPush);
+                                                if ($fwPush) {
+                                                    echo date('Y-m-d h:i:s') . " : Create daily push file IF success \n";
+                                                }
+                                            }
                                         }
                                     }
                                 } else {
@@ -76,7 +92,7 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                                         //SessionDate
                                         $sessionDate = date("Y-m-d h:i:s");
 
-                                        $contentPush = $memData['telco'] . "|" . $memData['shortcode'] . "|" . $memData['msisdn'] . "|" . $memData['keyword'] . "|reg " . $memData['keyword'] . "||" . $nowDate . "|" . $sessionid . "|" . $sessionDate . "|reg|" . $cntent['content_number'] . "|" . $cntent['content_field'] . "|1|push|" . $appConfData['cost_push'] . "|1|PUSH;IOD;" . strtoupper($memData['keyword']) . ";DAILYPUSH|" . $appConfData['id_app'];
+                                        $contentPush = $memData['telco'] . "|" . $memData['shortcode'] . "|" . $memData['msisdn'] . "|" . $memData['keyword'] . "|DAILY PUSH " . strtoupper($memData['keyword']) . "||" . $nowDate . "|" . $sessionid . "|" . $sessionDate . "|reg|" . $cntent['content_number'] . "|" . $cntent['content_field'] . "|1|push|" . $appConfData['cost_push'] . "|1|PUSH;IOD;" . strtoupper($memData['keyword']) . ";DAILYPUSH|" . $appConfData['id_app'];
 
                                         $pushTelco = $pushFolder . '/' . $memData['telco'] . '/push';
 
@@ -84,7 +100,7 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                                             mkdir($pushTelco, 0777, true);
                                         }
 
-                                        chmod($path, 0777);
+                                        chmod($pushTelco, 0777);
 
                                         $filePush = $pushTelco . '/daily-push-' . $sessionid . '.txt';
 
@@ -92,7 +108,7 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                                         if ($createFilePush) {
                                             $fwPush = fwrite($createFilePush, $contentPush);
                                             if ($fwPush) {
-                                                echo date('Y-m-d h:i:s') . " : Create daily push file success \n";
+                                                echo date('Y-m-d h:i:s') . " : Create daily push file ELSE success \n";
                                             }
                                         }
                                     }
