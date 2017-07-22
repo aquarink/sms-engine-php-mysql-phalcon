@@ -4,7 +4,7 @@ allprocess="
 /cli.php mo
 /cli.php dr
 /cli.php app
-/cli.php push xl
+/cli.php wrongkey
 "
 
 # Redefine IFS with >
@@ -22,9 +22,9 @@ do
 	apa=`ps -eo "%p %a" | grep -P "$i$" | grep -v grep | cut -c1-5`
 	
 	if [[ $apa != ""  ]]; then
-		echo $i "is already running with PID $apa"
+		echo $i " ALREADY RUNNING : PID $apa"
 	else
-		echo "starting" $i
+		echo "STARTING : " $i
 		cd /var/www/html/engine/
 		php /var/www/html/engine/app/cli.php $counter &
 	fi

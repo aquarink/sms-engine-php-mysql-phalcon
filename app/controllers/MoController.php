@@ -26,9 +26,12 @@ class MoController extends \Phalcon\Mvc\Controller {
             }
 
             $smsExpld = explode(' ', $sms);
-            
-            if(strtolower($smsExpld[0]) == 'reg') {
+
+            if (strtolower($smsExpld[0]) == 'reg') {
                 $sataus = 'reg';
+                $keyword = $smsExpld[1];
+            } elseif (strtolower($smsExpld[0]) == 'unreg') {
+                $sataus = 'unreg';
                 $keyword = $smsExpld[1];
             } else {
                 $sataus = '';
@@ -39,7 +42,7 @@ class MoController extends \Phalcon\Mvc\Controller {
 
             $projectFolder = $_SERVER['DOCUMENT_ROOT'] . "/sms-engine-php-mysql-1";
             //$projectFolder = '/var/www/html/engine';
-            
+
             $path = $projectFolder . '/filesystem/mo/';
             $file = $path . $sessionid . '.txt';
 

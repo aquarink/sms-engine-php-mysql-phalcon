@@ -89,9 +89,9 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                     "password" => $telcoConfig['password'],
                                     "shortcode" => $expldData[1],
                                     "msisdn" => $expldData[2],
-                                    "trxid" => $expldData[5],
-                                    "serviceId" => $expldData[14],
-                                    "sms" => $expldData[11],
+                                    "trxid" => $expldData[6],
+                                    "serviceId" => $expldData[15],
+                                    "sms" => $expldData[12],
                                     "shortname" => "1234567890");
 
                                 $host = $telcoConfig['address'] . '?';
@@ -109,44 +109,25 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                 $resTxrid = $configData['trxid']['@attributes']['id'];
 
                                 // Insert
-//                            [0] => xl
-//                            [1] => 912345
-//                            [2] => 6285966655261
-//                            [3] => bola
-//                            [4] => reg bola
-//                            [5] =>
-//                            [6] => 2017-07-03
-//                            [7] => 535079 // session date
-//                            [8] => 2017-07-18 10:41:33
-//                            [9] => reg
-//                            [10] => 2
-//                            [11] => Reply Bola Kedua
-//                            [12] => 1
-//                            [13] => pull
-//                            [14] => 1000
-//                            [15] => 1
-//                            [16] => subject
-//                            [17] => id_app
-
                                 $smsPush = array(
                                     'telco' => "'$expldData[0]'",
                                     'shortcode' => "'$expldData[1]'",
                                     'msisdn' => "'$expldData[2]'",
-                                    'sms_field' => "'$expldData[4]'",
-                                    'id_app' => "'$expldData[17]'",
-                                    'keyword' => "'$expldData[3]'",
-                                    'content_number' => "'$expldData[10]'",
-                                    'content_field' => "'$expldData[11]'",
+                                    'sms_field' => "'$expldData[5]'",
+                                    'id_app' => "'$expldData[3]'",
+                                    'keyword' => "'$expldData[4]'",
+                                    'content_number' => "'$expldData[11]'",
+                                    'content_field' => "'$expldData[12]'",
                                     'trx_id' => "'$resTxrid'",
-                                    'trx_date' => "'$expldData[6]'",
-                                    'session_id' => "'$expldData[7]'",
-                                    'session_date' => "'$expldData[8]'",
-                                    'reg_type' => "'$expldData[9]'",
-                                    'type' => "'$expldData[13]'",
-                                    'cost' => "'$expldData[14]'",
-                                    'send_status' => "'$expldData[15]'",
+                                    'trx_date' => "'$expldData[7]'",
+                                    'session_id' => "'$expldData[8]'",
+                                    'session_date' => "'$expldData[9]'",
+                                    'reg_type' => "'$expldData[10]'",
+                                    'type' => "'$expldData[14]'",
+                                    'cost' => "'$expldData[15]'",
+                                    'send_status' => "'$expldData[16]'",
                                     'response_code' => "'$resCode'",
-                                    'subject' => "'$expldData[16]'"
+                                    'subject' => "'$expldData[17]'"
                                 );
 
                                 $querySave = "INSERT INTO $tableName ( " . implode(', ', array_keys($smsPush)) . ") VALUES (" . implode(', ', array_values($smsPush)) . ")";
@@ -163,7 +144,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                         $reTryPath = $path . '/filesystem/retry/';
                                         $reFile = $reTryPath . $sessionid . '-retry.txt';
 
-                                        $expldData[16] = $expldData[16] . ';RETRY1';
+                                        $expldData[17] = $expldData[17] . ';RETRY1-147';
                                         $reContent = implode('|', array_values($expldData));
 
                                         if (!file_exists($reTryPath)) {
@@ -178,7 +159,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                             if ($ReTryfw) {
                                                 fclose($createReTryFile);
                                                 if (unlink($pushFolder . "/" . $listFile[$offset])) {
-                                                    echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - code else 0 max - 2222 Success \n";
+                                                    echo date('Y-m-d h:i:s') . " : Retry push to telco, Insert Push Data & DR File Unlink - code else 0 max - 2222 Success \n";
                                                 }
                                             }
                                         }
@@ -200,9 +181,9 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                     "password" => $telcoConfig['password'],
                                     "shortcode" => $expldData[1],
                                     "msisdn" => $expldData[2],
-                                    "trxid" => $expldData[5],
-                                    "serviceId" => $expldData[14],
-                                    "sms" => $expldData[11],
+                                    "trxid" => $expldData[6],
+                                    "serviceId" => $expldData[15],
+                                    "sms" => $expldData[12],
                                     "shortname" => "1234567890");
 
                                 $host = $telcoConfig['address'] . '?';
@@ -220,44 +201,25 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                 $resTxrid = $configData['trxid']['@attributes']['id'];
 
                                 // Insert
-//                            [0] => xl
-//                            [1] => 912345
-//                            [2] => 6285966655261
-//                            [3] => bola
-//                            [4] => reg bola
-//                            [5] =>
-//                            [6] => 2017-07-03
-//                            [7] => 535079 // session date
-//                            [8] => 2017-07-18 10:41:33
-//                            [9] => reg
-//                            [10] => 2
-//                            [11] => Reply Bola Kedua
-//                            [12] => 1
-//                            [13] => pull
-//                            [14] => 1000
-//                            [15] => 1
-//                            [16] => subject
-//                            [17] => id app
-
                                 $smsPush = array(
                                     'telco' => "'$expldData[0]'",
                                     'shortcode' => "'$expldData[1]'",
                                     'msisdn' => "'$expldData[2]'",
-                                    'sms_field' => "'$expldData[4]'",
-                                    'id_app' => "'$expldData[17]'",
-                                    'keyword' => "'$expldData[3]'",
-                                    'content_number' => "'$expldData[10]'",
-                                    'content_field' => "'$expldData[11]'",
+                                    'sms_field' => "'$expldData[5]'",
+                                    'id_app' => "'$expldData[3]'",
+                                    'keyword' => "'$expldData[4]'",
+                                    'content_number' => "'$expldData[11]'",
+                                    'content_field' => "'$expldData[12]'",
                                     'trx_id' => "'$resTxrid'",
-                                    'trx_date' => "'$expldData[6]'",
-                                    'session_id' => "'$expldData[7]'",
-                                    'session_date' => "'$expldData[8]'",
-                                    'reg_type' => "'$expldData[9]'",
-                                    'type' => "'$expldData[13]'",
-                                    'cost' => "'$expldData[14]'",
-                                    'send_status' => "'$expldData[15]'",
+                                    'trx_date' => "'$expldData[7]'",
+                                    'session_id' => "'$expldData[8]'",
+                                    'session_date' => "'$expldData[9]'",
+                                    'reg_type' => "'$expldData[10]'",
+                                    'type' => "'$expldData[14]'",
+                                    'cost' => "'$expldData[15]'",
+                                    'send_status' => "'$expldData[16]'",
                                     'response_code' => "'$resCode'",
-                                    'subject' => "'$expldData[16]'"
+                                    'subject' => "'$expldData[17]'"
                                 );
 
                                 $querySave = "INSERT INTO $tableName ( " . implode(', ', array_keys($smsPush)) . ") VALUES (" . implode(', ', array_values($smsPush)) . ")";
@@ -274,7 +236,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                         $reTryPath = $path . '/filesystem/retry/';
                                         $reFile = $reTryPath . $sessionid . '-retry.txt';
 
-                                        $expldData[16] = $expldData[16] . ';RETRY1';
+                                        $expldData[17] = $expldData[17] . ';RETRY1-239';
                                         $reContent = implode('|', array_values($expldData));
 
                                         if (!file_exists($reTryPath)) {
@@ -289,7 +251,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                             if ($ReTryfw) {
                                                 fclose($createReTryFile);
                                                 if (unlink($pushFolder . "/" . $listFile[$offset])) {
-                                                    echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - code else 0 min - 4444 Success \n";
+                                                    echo date('Y-m-d h:i:s') . " : Retry push to telco, Insert Push Data & DR File Unlink - code else 0 min - 4444 Success \n";
                                                 }
                                             }
                                         }
@@ -325,15 +287,17 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                     "password" => $telcoConfig['password'],
                                     "shortcode" => $expldDataPull[1],
                                     "msisdn" => $expldDataPull[2],
-                                    "trxid" => $expldDataPull[5],
-                                    "serviceId" => $expldDataPull[14],
-                                    "sms" => $expldDataPull[11],
+                                    "trxid" => $expldDataPull[6],
+                                    "serviceId" => $expldDataPull[15],
+                                    "sms" => $expldDataPull[12],
                                     "shortname" => "1234567890");
 
                                 $hostPull = $telcoConfig['address'] . '?';
                                 $hostPull .= http_build_query($optionsPull, '', '&');
 
-                                $optsPull = array('http' => array('header' => "User-Agent:Mozilla/5.0 (Windows NT 6.2) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.75 Safari/537.1\r\n"));
+                                $optsPull = array('http' => array('hea'
+                                        . ''
+                                        . 'der' => "User-Agent:Mozilla/5.0 (Windows NT 6.2) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.75 Safari/537.1\r\n"));
                                 $contextPull = stream_context_create($optsPull);
                                 $postResultPull = file_get_contents($hostPull, false, $contextPull);
 
@@ -345,44 +309,25 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                 $resTxridPull = $configDataPull['trxid']['@attributes']['id'];
 
                                 // Insert
-//                            [0] => xl
-//                            [1] => 912345
-//                            [2] => 6285966655261
-//                            [3] => bola
-//                            [4] => reg bola
-//                            [5] =>
-//                            [6] => 2017-07-03
-//                            [7] => 535079 // session date
-//                            [8] => 2017-07-18 10:41:33
-//                            [9] => reg
-//                            [10] => 2
-//                            [11] => Reply Bola Kedua
-//                            [12] => 1
-//                            [13] => pull
-//                            [14] => 1000
-//                            [15] => 1
-//                            [16] => subject
-//                            [17] => id_app
-
                                 $smsPull = array(
                                     'telco' => "'$expldDataPull[0]'",
                                     'shortcode' => "'$expldDataPull[1]'",
                                     'msisdn' => "'$expldDataPull[2]'",
-                                    'sms_field' => "'$expldDataPull[4]'",
-                                    'id_app' => "'$expldDataPull[17]'",
-                                    'keyword' => "'$expldDataPull[3]'",
-                                    'content_number' => "'$expldDataPull[10]'",
-                                    'content_field' => "'$expldDataPull[11]'",
+                                    'sms_field' => "'$expldDataPull[5]'",
+                                    'id_app' => "'$expldDataPull[3]'",
+                                    'keyword' => "'$expldDataPull[4]'",
+                                    'content_number' => "'$expldDataPull[11]'",
+                                    'content_field' => "'$expldDataPull[12]'",
                                     'trx_id' => "'$resTxridPull'",
-                                    'trx_date' => "'$expldDataPull[6]'",
-                                    'session_id' => "'$expldDataPull[7]'",
-                                    'session_date' => "'$expldDataPull[8]'",
-                                    'reg_type' => "'$expldDataPull[9]'",
-                                    'type' => "'$expldDataPull[13]'",
-                                    'cost' => "'$expldDataPull[14]'",
-                                    'send_status' => "'$expldDataPull[15]'",
+                                    'trx_date' => "'$expldDataPull[7]'",
+                                    'session_id' => "'$expldDataPull[8]'",
+                                    'session_date' => "'$expldDataPull[9]'",
+                                    'reg_type' => "'$expldDataPull[10]'",
+                                    'type' => "'$expldDataPull[14]'",
+                                    'cost' => "'$expldDataPull[15]'",
+                                    'send_status' => "'$expldDataPull[16]'",
                                     'response_code' => "'$resCodePull'",
-                                    'subject' => "'$expldDataPull[16]'"
+                                    'subject' => "'$expldDataPull[17]'"
                                 );
 
                                 $querySavePull = "INSERT INTO $tableName ( " . implode(', ', array_keys($smsPull)) . ") VALUES (" . implode(', ', array_values($smsPull)) . ")";
@@ -399,7 +344,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                         $reTryPathPull = $path . '/filesystem/retry/';
                                         $reFilePull = $reTryPathPull . $sessionidPull . '-retry.txt';
 
-                                        $expldDataPull[16] = $expldDataPull[16] . ';RETRY1';
+                                        $expldDataPull[17] = $expldDataPull[17] . ';RETRY1-348';
                                         $reContentPull = implode('|', array_values($expldDataPull));
 
                                         if (!file_exists($reTryPathPull)) {
@@ -414,7 +359,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                             if ($ReTryfwPull) {
                                                 fclose($createReTryFilePull);
                                                 if (unlink($pullFolder . "/" . $listFilePull[$offsetPull])) {
-                                                    echo date('Y-m-d h:i:s') . " : Push to telco, Insert Pull Data & DR File Unlink - code else 0 max - 6666 Success \n";
+                                                    echo date('Y-m-d h:i:s') . " : Retry push to telco, Insert Pull Data & DR File Unlink - code else 0 max - 6666 Success \n";
                                                 }
                                             }
                                         }
@@ -436,9 +381,9 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                     "password" => $telcoConfig['password'],
                                     "shortcode" => $expldDataPull[1],
                                     "msisdn" => $expldDataPull[2],
-                                    "trxid" => $expldDataPull[5],
-                                    "serviceId" => $expldDataPull[14],
-                                    "sms" => $expldDataPull[11],
+                                    "trxid" => $expldDataPull[6],
+                                    "serviceId" => $expldDataPull[15],
+                                    "sms" => $expldDataPull[12],
                                     "shortname" => "1234567890");
 
                                 $hosPullt = $telcoConfigPull['address'] . '?';
@@ -456,44 +401,25 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                 $resTxridPull = $configDataPull['trxid']['@attributes']['id'];
 
                                 // Insert
-//                            [0] => xl
-//                            [1] => 912345
-//                            [2] => 6285966655261
-//                            [3] => bola
-//                            [4] => reg bola
-//                            [5] =>
-//                            [6] => 2017-07-03
-//                            [7] => 535079 // session date
-//                            [8] => 2017-07-18 10:41:33
-//                            [9] => reg
-//                            [10] => 2
-//                            [11] => Reply Bola Kedua
-//                            [12] => 1
-//                            [13] => pull
-//                            [14] => 1000
-//                            [15] => 1
-//                            [16] => subject
-//                            [17] => id app
-
                                 $smsPull = array(
                                     'telco' => "'$expldDataPull[0]'",
                                     'shortcode' => "'$expldDataPull[1]'",
                                     'msisdn' => "'$expldDataPull[2]'",
-                                    'sms_field' => "'$expldDataPull[4]'",
-                                    'id_app' => "'$expldDataPull[17]'",
-                                    'keyword' => "'$expldDataPull[3]'",
-                                    'content_number' => "'$expldDataPull[10]'",
-                                    'content_field' => "'$expldDataPull[11]'",
+                                    'sms_field' => "'$expldDataPull[5]'",
+                                    'id_app' => "'$expldDataPull[3]'",
+                                    'keyword' => "'$expldDataPull[4]'",
+                                    'content_number' => "'$expldDataPull[11]'",
+                                    'content_field' => "'$expldDataPull[12]'",
                                     'trx_id' => "'$resTxridPull'",
-                                    'trx_date' => "'$expldDataPull[6]'",
-                                    'session_id' => "'$expldDataPull[7]'",
-                                    'session_date' => "'$expldDataPull[8]'",
-                                    'reg_type' => "'$expldDataPull[9]'",
-                                    'type' => "'$expldDataPull[13]'",
-                                    'cost' => "'$expldDataPull[14]'",
-                                    'send_status' => "'$expldDataPull[15]'",
+                                    'trx_date' => "'$expldDataPull[7]'",
+                                    'session_id' => "'$expldDataPull[8]'",
+                                    'session_date' => "'$expldDataPull[9]'",
+                                    'reg_type' => "'$expldDataPull[10]'",
+                                    'type' => "'$expldDataPull[14]'",
+                                    'cost' => "'$expldDataPull[15]'",
+                                    'send_status' => "'$expldDataPull[16]'",
                                     'response_code' => "'$resCodePull'",
-                                    'subject' => "'$expldDataPull[16]'"
+                                    'subject' => "'$expldDataPull[17]'"
                                 );
 
                                 $querySavePull = "INSERT INTO $tableName ( " . implode(', ', array_keys($smsPull)) . ") VALUES (" . implode(', ', array_values($smsPull)) . ")";
@@ -510,7 +436,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                         $reTryPathPull = $path . '/filesystem/retry/';
                                         $reFilePull = $reTryPathPull . $sessionidPull . '-retry.txt';
 
-                                        $expldDataPull[16] = $expldDataPull[16] . ';RETRY1';
+                                        $expldDataPull[17] = $expldDataPull[17] . ';RETRY1-440';
                                         $reContentPull = implode('|', array_values($expldDataPull));
 
                                         if (!file_exists($reTryPathPull)) {
@@ -525,7 +451,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                             if ($ReTryfwPull) {
                                                 fclose($createReTryFilePull);
                                                 if (unlink($pullFolder . "/" . $listFilePull[$offsetPull])) {
-                                                    echo date('Y-m-d h:i:s') . " : Push to telco, Insert Pull Data & DR File Unlink - code else 0 min - 8888 Success \n";
+                                                    echo date('Y-m-d h:i:s') . " : Retry push to telco, Insert Pull Data & DR File Unlink - code else 0 min - 8888 Success \n";
                                                 }
                                             }
                                         }

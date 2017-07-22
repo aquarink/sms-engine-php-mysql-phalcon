@@ -16,17 +16,18 @@ try {
                     fclose($theFiles);
                     //if (unlink($appFolder . "/" . $fileNames)) {
                     $expldData = explode("|", $dataFiles);
-//                        [0] => xl
-//                        [1] => 912345
-//                        [2] => 6281866655262
-//                        [3] => bola
-//                        [4] => reg bola
-//                        [5] => 9922112262
-//                        [6] => 2017-05-12
-//                        [7] => 31340523
-//                        [8] => 2017-07-19 09:15:09
-//                        [9] => reg
 
+//                    [0] => xl
+//                    [1] => 912345
+//                    [2] => 6281966655263
+//                    [3] => bola
+//                    [4] => reg bola
+//                    [5] => 9922112263
+//                    [6] => 2017-07-22
+//                    [7] => 72987145
+//                    [8] => 2017-07-22 06:37:57
+//                    [9] => reg
+                    
                     $checkQuery = "SELECT content_number FROM tb_push_summary WHERE "
                             . "telco = '$expldData[0]' AND "
                             . "shortcode = '$expldData[1]' AND "
@@ -38,7 +39,7 @@ try {
 
                     $sessionRand = rand(1, 99999999);
 
-                    $pathPush = $path . "/filesystem/push/" . $expldData[0]."/pull";
+                    $pathPush = $path . "/filesystem/push/" . $expldData[0] . "/pull";
                     if (!file_exists($pathPush)) {
                         mkdir($pathPush, 0777, true);
                     }
@@ -62,20 +63,12 @@ try {
 
                     //
                     if ($result->numRows() > 0) {
-                        // Create App Message Only
-                        //$contentSequence = $smsPushData[0]['content_number'] + 1;
-                        //$contentQuery = "SELECT * FROM tb_apps_content WHERE "
-                        //        . "keyword = '$appName' AND "
-                        //        . "content_number = '$contentSequence'";
-                        //$contentResult = $this->db->query($contentQuery);
-                        //$cntn = $contentResult->fetchAll()[0];
-                        // seqNumber Reply regType pull/pushType cost statusSend
-                        //$contentApp = $expldData[0] . '|' . $expldData[1] . '|' . $expldData[2] . '|' . $expldData[3] . '|' . $expldData[4] . '||' . $expldData[6] . '|' . $expldData[7] . '|' . $expldData[8] . '|' . $expldData[9] . '|' . $cntn['content_number'] . '|' . $cntn['content_field'] . '|1|pull|' . $appConfig['cost_pull'] . '|1|push;iod;' . $appName . ';dailypush';
-                        $contentApp = $dataFiles . '|0|Welcome Message Karena reg 2x|1|pull|0|1|REG;IOD;' . strtoupper($appName) . '|' . $key['id_app'];
+                        $contentApp = $expldData[0] . '|' . $expldData[1] . '|' . $expldData[2] . '|' . $appConfig['id_app'] . '|' . $expldData[3] . '|' . $expldData[4] . '|' . $expldData[5] . '|' . $expldData[6] . '|' . $expldData[7] . '|' . $expldData[8] . '|' . $expldData[9] . '|0|Welcome Message Karena reg 2x|1|pull|0|1|REG;IOD;' . strtoupper($appName);
                         $fileApp = $pathPush . '/' . $sessionRand . '-dua.txt';
                     } else {
                         $contentSequence = 1;
-                        $contentWelcome = $dataFiles . '|0|Welcome Message reg 1x|1|pull|0|1|REG;IOD;' . strtoupper($appName) . '|' . $key['id_app'];
+                        $contentWelcome = $expldData[0] . '|' . $expldData[1] . '|' . $expldData[2] . '|' . $appConfig['id_app'] . '|' . $expldData[3] . '|' . $expldData[4] . '|' . $expldData[5] . '|' . $expldData[6] . '|' . $expldData[7] . '|' . $expldData[8] . '|' . $expldData[9] . '|0|Welcome Message reg 1x|1|pull|0|1|REG;IOD;' . strtoupper($appName);
+
                         $fileWelcome = $pathPush . '/' . $expldData[5] . '-satu.txt';
                         // Create App File
                         $createWelcome = fopen($fileWelcome, "w");
@@ -93,9 +86,8 @@ try {
                                 $cntn = $contentResult->fetchAll()[0];
 
                                 // seqNumber Reply regType pull/pushType cost statusSend
-                                $contentApp = $expldData[0] . '|' . $expldData[1] . '|' . $expldData[2] . '|' . $expldData[3] . '|' . $expldData[4] . '||' . $expldData[6] . '|' . $expldData[7] . '|' . $expldData[8] . '|' . $expldData[9] . '|' . $cntn['content_number'] . '|' . $cntn['content_field'] . '|1|PUSH|' . $appConfig['cost_pull'] . '|1|PUSH;IOD;' . strtoupper($appName) . ';FIRSTPUSH|' . $key['id_app'];
-                                ;
-                                $fileApp = $pathPush . '/' . $sessionRand . 'content.txt';
+                                $contentApp = $expldData[0] . '|' . $expldData[1] . '|' . $expldData[2] . '|' . $appConfig['id_app'] . '|' . $expldData[3] . '|' . $expldData[4] . '||' . $expldData[6] . '|' . $sessionRand . '|' . $expldData[8] . '|' . $expldData[9] . '|' . $cntn['content_number'] . '|' . $cntn['content_field'] . '|1|push|' . $appConfig['cost_pull'] . '|1|PUSH;IOD;' . strtoupper($appName) . ';FIRSTPUSH';
+                                $fileApp = $pathPush . '/' . $sessionRand . '-content.txt';
                             }
                         }
                     }
