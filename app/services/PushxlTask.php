@@ -69,6 +69,12 @@ class PushxlTask extends \Phalcon\CLI\Task {
                     $pushLimit = $telcoConfig['push_limit'];
                 }
 
+                if (!file_exists($pushFolder)) {
+                    mkdir($pushFolder, 0777, true);
+                }
+
+                chmod($pushFolder, 0777);
+
                 if ($handle = opendir($pushFolder)) {
                     // Read File Limit
                     $filesArr = scandir($pushFolder);
@@ -266,8 +272,14 @@ class PushxlTask extends \Phalcon\CLI\Task {
                 //
                 // PULL PROSESS
                 //
+                
+                if (!file_exists($pullFolder)) {
+                    mkdir($pullFolder, 0777, true);
+                }
+                
+                chmod($pullFolder, 0777);
             
-            if ($handlePull = opendir($pullFolder)) {
+                if ($handlePull = opendir($pullFolder)) {
                     // Read File Limit
                     $filesArrPull = scandir($pullFolder);
                     $listFilePull = array_splice($filesArrPull, 2);
