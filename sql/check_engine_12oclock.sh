@@ -1,7 +1,7 @@
 #!/bin/sh
 
 allprocess="
-updateclean
+/cli.php retrypush
 "
 
 # Redefine IFS with >
@@ -19,10 +19,11 @@ do
 	apa=`ps -eo "%p %a" | grep -P "$i$" | grep -v grep | cut -c1-5`
 	
 	if [[ $apa != ""  ]]; then
-		echo $i "is already running with PID $apa"
+		echo $i " ALREADY RUNNING : PID $apa"
 	else
-		echo "Engine Starting" $i
-		php /var/www/html/engine/app/cli.php $i &
+		echo "STARTING : " $i
+		cd /var/www/html/engine/
+		php /var/www/html/engine/app/cli.php $counter &
 	fi
 	
 counter=`expr $counter + 1`

@@ -6,21 +6,21 @@ class RetrypushTask extends \Phalcon\CLI\Task {
 
     // php app/cli.php mo
     public function MainAction() {
-        //while (true) {
-        try {
-            $path = getcwd();
-            //$path = '/var/www/html/engine';
+        while (true) {
+            try {
+                //$path = getcwd();
+                $path = '/var/www/html/engine';
 
-            $projectFolder = $path . '/filesystem/retry';
+                $projectFolder = $path . '/filesystem/retry';
 
-            if ($handle = opendir($projectFolder)) {
-                while (false !== ($entry = readdir($handle))) {
-                    if ($entry != '.' && $entry != '..') {
-                        // Read File
-                        $theFile = fopen($projectFolder . "/" . $entry, "r");
-                        if ($theFile) {
-                            $dataFile = fread($theFile, filesize($projectFolder . "/" . $entry));
-                            $expldData = explode("|", $dataFile);
+                if ($handle = opendir($projectFolder)) {
+                    while (false !== ($entry = readdir($handle))) {
+                        if ($entry != '.' && $entry != '..') {
+                            // Read File
+                            $theFile = fopen($projectFolder . "/" . $entry, "r");
+                            if ($theFile) {
+                                $dataFile = fread($theFile, filesize($projectFolder . "/" . $entry));
+                                $expldData = explode("|", $dataFile);
 //                            [0] => xl
 //                            [1] => 912345
 //                            [2] => 6281966655242
@@ -40,25 +40,25 @@ class RetrypushTask extends \Phalcon\CLI\Task {
 //                            [16] => PUSH; IOD; BOLA; DAILYPUSH; RETRY
 //                            [17] => 1;
 
-                            $retryPushPath = $path . '/filesystem/push/' . $expldData[0] . '/push';
-                            if (!file_exists($retryPushPath)) {
-                                mkdir($retryPushPath, 0777, true);
-                            }
-                            chmod($retryPushPath, 0777);
+                                $retryPushPath = $path . '/filesystem/push/' . $expldData[0] . '/push';
+                                if (!file_exists($retryPushPath)) {
+                                    mkdir($retryPushPath, 0777, true);
+                                }
+                                chmod($retryPushPath, 0777);
 
-                            if (rename($projectFolder . "/" . $entry, $retryPushPath . '/' . $entry)) {
-                                echo date('Y-m-d h:i:s') . " : Move Retry File to Push \n";
+                                if (rename($projectFolder . "/" . $entry, $retryPushPath . '/' . $entry)) {
+                                    echo date('Y-m-d h:i:s') . " : Move Retry File to Push \n";
+                                }
                             }
                         }
                     }
+                    closedir($handle);
                 }
-                closedir($handle);
+            } catch (\Exception $e) {
+                echo date('Y-m-d h:i:s') . " : Error try catch $e \n";
             }
-        } catch (\Exception $e) {
-            echo date('Y-m-d h:i:s') . " : Error try catch $e \n";
+            sleep(1);
         }
-        //sleep(1);
-        //}
     }
 
 }

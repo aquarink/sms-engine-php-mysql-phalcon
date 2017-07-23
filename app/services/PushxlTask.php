@@ -10,8 +10,8 @@ class PushxlTask extends \Phalcon\CLI\Task {
 
         while (true) {
             try {
-                $path = getcwd();
-                //$path = '/var/www/html/engine';
+                //$path = getcwd();
+                $path = '/var/www/html/engine';
 
                 $pushTelcoFolder = $path . '/filesystem/push/' . $telco;
                 $pushFolder = $pushTelcoFolder . '/push';
@@ -398,11 +398,11 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                     "sms" => $expldDataPull[12],
                                     "shortname" => "1234567890");
 
-                                $hosPullt = $telcoConfigPull['address'] . '?';
+                                $hostPull = $telcoConfig['address'] . '?';
                                 $hostPull .= http_build_query($optionsPull, '', '&');
 
                                 $optsPull = array('http' => array('header' => "User-Agent:Mozilla/5.0 (Windows NT 6.2) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.75 Safari/537.1\r\n"));
-                                $contextPull = stream_context_create($opts);
+                                $contextPull = stream_context_create($optsPull);
                                 $postResultPull = file_get_contents($hostPull, false, $contextPull);
 
                                 $xmlPull = simplexml_load_string($postResultPull);
@@ -437,9 +437,9 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                 $querySavePull = "INSERT INTO $tableName ( " . implode(', ', array_keys($smsPull)) . ") VALUES (" . implode(', ', array_values($smsPull)) . ")";
                                 $exeSavePull = $this->dblog->query($querySavePull);
 
-                                if ($exeSave->numRows() > 0) {
-                                    if ($resCode == 0) {
-                                        if (unlink($pullFolder . "/" . $listFile[$offset])) {
+                                if ($exeSavePull->numRows() > 0) {
+                                    if ($resCodePull == 0) {
+                                        if (unlink($pullFolder . "/" . $listFilePull[$offsetPull])) {
                                             echo date('Y-m-d h:i:s') . " : Push to telco, Insert Pull Data & DR File Unlink - code 0 min - 7777 Success \n";
                                         }
                                     } else {

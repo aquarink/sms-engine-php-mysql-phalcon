@@ -9,8 +9,8 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
         $tbDate = date('Y_m_d');
         $nowDate = date('Y-m-d');
 
-        $path = getcwd();
-        //$path = '/var/www/html/engine';
+        //$path = getcwd();
+        $path = '/var/www/html/engine';
 
         $pushFolder = $path . '/filesystem/push';
 
