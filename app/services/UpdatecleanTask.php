@@ -100,9 +100,8 @@ class UpdatecleanTask extends \Phalcon\CLI\Task {
         foreach ($dataPUSHToday as $dPushT) {
             $querySavePush = "INSERT INTO $tableNamePush "
                     . "(telco,shortcode,msisdn,sms_field,keyword,content_number,content_field,trx_id,trx_date,session_id,session_date,reg_type,type,send_status,response_code,subject) "
-                    . "VALUES ('" . $dPushT['telco'] . "','" . $dPushT['shortcode'] . "','" . $dPushT['msisdn'] . "','" . $dPushT['sms_field'] . "','" . $dPushT['keyword'] . "','" . $dPushT['content_number'] . "','" . $dPushT['content_field'] . "','" . $dPushT['trx_id'] . "','" . $dPushT['trx_date'] . "','" . $dPushT['session_id'] . "','" . $dPushT['session_date'] . "','" . $dPushT['reg_type'] . ",'" . $dPushT['type'] . "','" . $dPushT['send_status'] . "','" . $dPushT['response_code'] . ",'" . $dPushT['subject'] . "')";
-
-            $savePushtoDatePush = $this->dblog->query($querySaveMo);
+                    . "VALUES ('" . $dPushT['telco'] . "','" . $dPushT['shortcode'] . "','" . $dPushT['msisdn'] . "','" . $dPushT['sms_field'] . "','" . $dPushT['keyword'] . "','" . $dPushT['content_number'] . "','" . $dPushT['content_field'] . "','" . $dPushT['trx_id'] . "','" . $dPushT['trx_date'] . "','" . $dPushT['session_id'] . "','" . $dPushT['session_date'] . "','" . $dPushT['reg_type'] . "','" . $dPushT['type'] . "','" . $dPushT['send_status'] . "','" . $dPushT['response_code'] . "','" . $dPushT['subject'] . "')";
+            $savePushtoDatePush = $this->dblog->query($querySavePush);
             if ($savePushtoDatePush->numRows() > 0) {
                 $queryDeletePush = "DELETE FROM tb_push_today WHERE id_push = '" . $dPushT['id_push'] . "'";
                 $deleteTbPushDate = $this->dblog->query($queryDeletePush);
