@@ -8,8 +8,8 @@ class AppTask extends \Phalcon\CLI\Task {
     public function MainAction() {
         while (true) {
             try {
-                //$paths = getcwd();
-                $paths = '/var/www/html/engine';
+                $paths = getcwd();
+                //$paths = '/var/www/html/engine';
 
                 $appSystem = $paths . '/appsystem';
                 if ($handle = opendir($appSystem)) {

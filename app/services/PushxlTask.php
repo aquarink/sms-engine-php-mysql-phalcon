@@ -10,8 +10,8 @@ class PushxlTask extends \Phalcon\CLI\Task {
 
         while (true) {
             try {
-                //$path = getcwd();
-                $path = '/var/www/html/engine';
+                $path = getcwd();
+                //$path = '/var/www/html/engine';
 
                 $pushTelcoFolder = $path . '/filesystem/push/' . $telco;
                 $pushFolder = $pushTelcoFolder . '/push';

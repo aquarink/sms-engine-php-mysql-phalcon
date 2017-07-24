@@ -8,8 +8,8 @@ class RetrypushTask extends \Phalcon\CLI\Task {
     public function MainAction() {
         while (true) {
             try {
-                //$path = getcwd();
-                $path = '/var/www/html/engine';
+                $path = getcwd();
+                //$path = '/var/www/html/engine';
 
                 $projectFolder = $path . '/filesystem/retry';
 
@@ -21,6 +21,7 @@ class RetrypushTask extends \Phalcon\CLI\Task {
                             if ($theFile) {
                                 $dataFile = fread($theFile, filesize($projectFolder . "/" . $entry));
                                 $expldData = explode("|", $dataFile);
+                                fclose($theFile);
 //                            [0] => xl
 //                            [1] => 912345
 //                            [2] => 6281966655242
