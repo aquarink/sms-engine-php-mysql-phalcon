@@ -5,6 +5,8 @@ try {
     $path = getcwd();
     //$path = '/var/www/html/engine';
 
+    $thisMonth = date('Y_m');
+
     $appFolder = $path . "/filesystem/app/" . $appName;
     if ($appDir = opendir($appFolder)) {
         while (false !== ($fileNames = readdir($appDir))) {
@@ -27,15 +29,42 @@ try {
 //                    [7] => 72987145
 //                    [8] => 2017-07-22 06:37:57
 //                    [9] => reg
+
+                    $ckTabMo = $this->dblog->query("SHOW TABLES LIKE 'tb_push_$thisMonth'");
+                    if ($ckTabMo->numRows() == 0) {
+                        $createTable = "CREATE TABLE tb_push_$thisMonth (
+                                id_push INT(11) NOT NULL AUTO_INCREMENT,
+                                telco VARCHAR(20) DEFAULT NULL,
+                                shortcode VARCHAR(20) DEFAULT NULL,
+                                msisdn VARCHAR(20) DEFAULT NULL,
+                                sms_field VARCHAR(200) DEFAULT NULL,
+                                id_app INT(11) DEFAULT NULL,
+                                keyword VARCHAR(100) DEFAULT NULL,
+                                content_number INT(11) DEFAULT NULL,
+                                content_field VARCHAR(200) DEFAULT NULL,
+                                trx_id VARCHAR(250) DEFAULT NULL,
+                                trx_date VARCHAR(20) DEFAULT NULL,
+                                session_id VARCHAR(100) DEFAULT NULL,
+                                session_date VARCHAR(20) DEFAULT NULL,
+                                reg_type VARCHAR(10) DEFAULT NULL,
+                                type VARCHAR(10) DEFAULT NULL,
+                                cost VARCHAR(10) DEFAULT NULL,
+                                send_status VARCHAR(10) DEFAULT NULL,
+                                response_code VARCHAR(10) DEFAULT NULL,
+                                subject VARCHAR(100) DEFAULT NULL,
+                                date_create VARCHAR(20) DEFAULT NULL,
+                                PRIMARY KEY (id_push))";
+
+                        $createExe = $this->dblog->query($createTable);
+                    }
                     
-                    $checkQuery = "SELECT content_number FROM tb_push_summary WHERE "
+                    $checkQuery = "SELECT content_number FROM tb_push_$thisMonth WHERE "
                             . "telco = '$expldData[0]' AND "
                             . "shortcode = '$expldData[1]' AND "
                             . "msisdn = '$expldData[2]' AND "
                             . "keyword = '$expldData[3]' "
                             . "ORDER BY id_push DESC LIMIT 1";
                     $result = $this->dblog->query($checkQuery);
-                    $smsPushData = $result->fetchAll();
 
                     $sessionRand = rand(1, 99999999);
 
@@ -52,6 +81,7 @@ try {
                             . "shortcode = '$expldData[1]' AND "
                             . "keyword = '$appName'";
                     $keywordResult = $this->db->query($keywordQuery);
+
                     $key = $keywordResult->fetchAll()[0];
 
 
@@ -82,6 +112,7 @@ try {
                                         . "id_app = '$key[id_app]' AND "
                                         . "keyword = '$appName' AND "
                                         . "content_number = '$contentSequence'";
+                                //echo $contentQuery;
                                 $contentResult = $this->db->query($contentQuery);
                                 $cntn = $contentResult->fetchAll()[0];
 

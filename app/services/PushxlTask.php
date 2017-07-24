@@ -13,6 +13,8 @@ class PushxlTask extends \Phalcon\CLI\Task {
                 $path = getcwd();
                 //$path = '/var/www/html/engine';
 
+                $now = date('Y-m-d');
+
                 $pushTelcoFolder = $path . '/filesystem/push/' . $telco;
                 $pushFolder = $pushTelcoFolder . '/push';
                 $pullFolder = $pushTelcoFolder . '/pull';
@@ -45,6 +47,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                 send_status VARCHAR(10) DEFAULT NULL,
                                 response_code VARCHAR(10) DEFAULT NULL,
                                 subject VARCHAR(100) DEFAULT NULL,
+                                date_create VARCHAR(20) DEFAULT NULL,
                                 PRIMARY KEY (id_push))";
 
                     //echo $createTable;
@@ -133,42 +136,16 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                     'cost' => "'$expldData[15]'",
                                     'send_status' => "'$expldData[16]'",
                                     'response_code' => "'$resCode'",
-                                    'subject' => "'$expldData[17]'"
+                                    'subject' => "'$expldData[17]'",
+                                    'date_create' => "'$now'"
                                 );
 
                                 $querySave = "INSERT INTO $tableName ( " . implode(', ', array_keys($smsPush)) . ") VALUES (" . implode(', ', array_values($smsPush)) . ")";
                                 $exeSave = $this->dblog->query($querySave);
 
                                 if ($exeSave->numRows() > 0) {
-                                    if ($resCode == 0) {
-                                        if (unlink($pushFolder . "/" . $listFile[$offset])) {
-                                            echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - code 0 max - 1111 Success \n";
-                                        }
-                                    } else {
-                                        // dan response error lainnya
-                                        $sessionid = rand(1, 99999999);
-                                        $reTryPath = $path . '/filesystem/retry/';
-                                        $reFile = $reTryPath . $sessionid . '-retry.txt';
-
-                                        $expldData[17] = $expldData[17] . ';RETRY1-147';
-                                        $reContent = implode('|', array_values($expldData));
-
-                                        if (!file_exists($reTryPath)) {
-                                            mkdir($reTryPath, 0777, true);
-                                        }
-
-                                        chmod($reTryPath, 0777);
-
-                                        $createReTryFile = fopen($reFile, "w");
-                                        if ($createReTryFile) {
-                                            $ReTryfw = fwrite($createReTryFile, $reContent);
-                                            if ($ReTryfw) {
-                                                fclose($createReTryFile);
-                                                if (unlink($pushFolder . "/" . $listFile[$offset])) {
-                                                    echo date('Y-m-d h:i:s') . " : Retry push to telco, Insert Push Data & DR File Unlink - code else 0 max - 2222 Success \n";
-                                                }
-                                            }
-                                        }
+                                    if (unlink($pushFolder . "/" . $listFile[$offset])) {
+                                        echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - code 0 max - 1111 Success \n";
                                     }
                                 }
                             }
@@ -225,42 +202,16 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                     'cost' => "'$expldData[15]'",
                                     'send_status' => "'$expldData[16]'",
                                     'response_code' => "'$resCode'",
-                                    'subject' => "'$expldData[17]'"
+                                    'subject' => "'$expldData[17]'",
+                                    'date_create' => "'$now'"
                                 );
 
                                 $querySave = "INSERT INTO $tableName ( " . implode(', ', array_keys($smsPush)) . ") VALUES (" . implode(', ', array_values($smsPush)) . ")";
                                 $exeSave = $this->dblog->query($querySave);
 
                                 if ($exeSave->numRows() > 0) {
-                                    if ($resCode == 0) {
-                                        if (unlink($pushFolder . "/" . $listFile[$offset])) {
-                                            echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - code 0 min - 3333 Success \n";
-                                        }
-                                    } else {
-                                        // dan response error lainnya
-                                        $sessionid = rand(1, 99999999);
-                                        $reTryPath = $path . '/filesystem/retry/';
-                                        $reFile = $reTryPath . $sessionid . '-retry.txt';
-
-                                        $expldData[17] = $expldData[17] . ';RETRY1-239';
-                                        $reContent = implode('|', array_values($expldData));
-
-                                        if (!file_exists($reTryPath)) {
-                                            mkdir($reTryPath, 0777, true);
-                                        }
-
-                                        chmod($reTryPath, 0777);
-
-                                        $createReTryFile = fopen($reFile, "w");
-                                        if ($createReTryFile) {
-                                            $ReTryfw = fwrite($createReTryFile, $reContent);
-                                            if ($ReTryfw) {
-                                                fclose($createReTryFile);
-                                                if (unlink($pushFolder . "/" . $listFile[$offset])) {
-                                                    echo date('Y-m-d h:i:s') . " : Retry push to telco, Insert Push Data & DR File Unlink - code else 0 min - 4444 Success \n";
-                                                }
-                                            }
-                                        }
+                                    if (unlink($pushFolder . "/" . $listFile[$offset])) {
+                                        echo date('Y-m-d h:i:s') . " : Push to telco, Insert Push Data & DR File Unlink - code 0 min - 3333 Success \n";
                                     }
                                 }
                             }
@@ -276,9 +227,9 @@ class PushxlTask extends \Phalcon\CLI\Task {
                 if (!file_exists($pullFolder)) {
                     mkdir($pullFolder, 0777, true);
                 }
-                
+
                 chmod($pullFolder, 0777);
-            
+
                 if ($handlePull = opendir($pullFolder)) {
                     // Read File Limit
                     $filesArrPull = scandir($pullFolder);
@@ -339,42 +290,16 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                     'cost' => "'$expldDataPull[15]'",
                                     'send_status' => "'$expldDataPull[16]'",
                                     'response_code' => "'$resCodePull'",
-                                    'subject' => "'$expldDataPull[17]'"
+                                    'subject' => "'$expldDataPull[17]'",
+                                    'date_create' => "'$now'"
                                 );
 
                                 $querySavePull = "INSERT INTO $tableName ( " . implode(', ', array_keys($smsPull)) . ") VALUES (" . implode(', ', array_values($smsPull)) . ")";
                                 $exeSavePull = $this->dblog->query($querySavePull);
 
                                 if ($exeSavePull->numRows() > 0) {
-                                    if ($resCodePull == 0) {
-                                        if (unlink($pullFolder . "/" . $listFilePull[$offsetPull])) {
-                                            echo date('Y-m-d h:i:s') . " : Push to telco, Insert Pull Data & DR File Unlink - code 0 max - 5555 Success \n";
-                                        }
-                                    } else {
-                                        // dan response error lainnya
-                                        $sessionidPull = rand(1, 99999999);
-                                        $reTryPathPull = $path . '/filesystem/retry/';
-                                        $reFilePull = $reTryPathPull . $sessionidPull . '-retry.txt';
-
-                                        $expldDataPull[17] = $expldDataPull[17] . ';RETRY1-348';
-                                        $reContentPull = implode('|', array_values($expldDataPull));
-
-                                        if (!file_exists($reTryPathPull)) {
-                                            mkdir($reTryPathPull, 0777, true);
-                                        }
-
-                                        chmod($reTryPathPull, 0777);
-
-                                        $createReTryFilePull = fopen($reFilePull, "w");
-                                        if ($createReTryFilePull) {
-                                            $ReTryfwPull = fwrite($createReTryFilePull, $reContentPull);
-                                            if ($ReTryfwPull) {
-                                                fclose($createReTryFilePull);
-                                                if (unlink($pullFolder . "/" . $listFilePull[$offsetPull])) {
-                                                    echo date('Y-m-d h:i:s') . " : Retry push to telco, Insert Pull Data & DR File Unlink - code else 0 max - 6666 Success \n";
-                                                }
-                                            }
-                                        }
+                                    if (unlink($pullFolder . "/" . $listFilePull[$offsetPull])) {
+                                        echo date('Y-m-d h:i:s') . " : Push to telco, Insert Pull Data & DR File Unlink - code 0 max - 5555 Success \n";
                                     }
                                 }
                             }
@@ -431,42 +356,16 @@ class PushxlTask extends \Phalcon\CLI\Task {
                                     'cost' => "'$expldDataPull[15]'",
                                     'send_status' => "'$expldDataPull[16]'",
                                     'response_code' => "'$resCodePull'",
-                                    'subject' => "'$expldDataPull[17]'"
+                                    'subject' => "'$expldDataPull[17]'",
+                                    'date_create' => "'$now'"
                                 );
 
                                 $querySavePull = "INSERT INTO $tableName ( " . implode(', ', array_keys($smsPull)) . ") VALUES (" . implode(', ', array_values($smsPull)) . ")";
                                 $exeSavePull = $this->dblog->query($querySavePull);
 
                                 if ($exeSavePull->numRows() > 0) {
-                                    if ($resCodePull == 0) {
-                                        if (unlink($pullFolder . "/" . $listFilePull[$offsetPull])) {
-                                            echo date('Y-m-d h:i:s') . " : Push to telco, Insert Pull Data & DR File Unlink - code 0 min - 7777 Success \n";
-                                        }
-                                    } else {
-                                        // dan response error lainnya
-                                        $sessionidPull = rand(1, 99999999);
-                                        $reTryPathPull = $path . '/filesystem/retry/';
-                                        $reFilePull = $reTryPathPull . $sessionidPull . '-retry.txt';
-
-                                        $expldDataPull[17] = $expldDataPull[17] . ';RETRY1-440';
-                                        $reContentPull = implode('|', array_values($expldDataPull));
-
-                                        if (!file_exists($reTryPathPull)) {
-                                            mkdir($reTryPathPull, 0777, true);
-                                        }
-
-                                        chmod($reTryPathPull, 0777);
-
-                                        $createReTryFilePull = fopen($reFilePull, "w");
-                                        if ($createReTryFilePull) {
-                                            $ReTryfwPull = fwrite($createReTryFilePull, $reContentPull);
-                                            if ($ReTryfwPull) {
-                                                fclose($createReTryFilePull);
-                                                if (unlink($pullFolder . "/" . $listFilePull[$offsetPull])) {
-                                                    echo date('Y-m-d h:i:s') . " : Retry push to telco, Insert Pull Data & DR File Unlink - code else 0 min - 8888 Success \n";
-                                                }
-                                            }
-                                        }
+                                    if (unlink($pullFolder . "/" . $listFilePull[$offsetPull])) {
+                                        echo date('Y-m-d h:i:s') . " : Push to telco, Insert Pull Data & DR File Unlink - code 0 min - 7777 Success \n";
                                     }
                                 }
                             }

@@ -6,12 +6,13 @@ class UpdatecleanTask extends \Phalcon\CLI\Task {
 
     public function MainAction() {
         $toDay = date('Y_m_d');
-        
-        
+
+        $now = date('Y-m-d');
+
         ///////////
         // MO
         ///////////
-        
+
 
         $tbMOToday = "SELECT * FROM tb_mo_today";
         $resultMOToday = $this->dblog->query($tbMOToday);
@@ -55,12 +56,12 @@ class UpdatecleanTask extends \Phalcon\CLI\Task {
                 }
             }
         }
-        
+
 
         ///////////
         // PUSH
         ///////////
-        
+
 
         $tbPUSHToday = "SELECT * FROM tb_push_today";
         $resultPUSToday = $this->dblog->query($tbPUSHToday);
@@ -92,6 +93,7 @@ class UpdatecleanTask extends \Phalcon\CLI\Task {
                 send_status VARCHAR(10) DEFAULT NULL,
                 response_code VARCHAR(10) DEFAULT NULL,
                 subject VARCHAR(100) DEFAULT NULL,
+                date_create VARCHAR(20) DEFAULT NULL,
                 PRIMARY KEY (id_push))";
 
             $this->dblog->query($createTablePush);
@@ -99,8 +101,8 @@ class UpdatecleanTask extends \Phalcon\CLI\Task {
 
         foreach ($dataPUSHToday as $dPushT) {
             $querySavePush = "INSERT INTO $tableNamePush "
-                    . "(telco,shortcode,msisdn,sms_field,keyword,content_number,content_field,trx_id,trx_date,session_id,session_date,reg_type,type,send_status,response_code,subject) "
-                    . "VALUES ('" . $dPushT['telco'] . "','" . $dPushT['shortcode'] . "','" . $dPushT['msisdn'] . "','" . $dPushT['sms_field'] . "','" . $dPushT['keyword'] . "','" . $dPushT['content_number'] . "','" . $dPushT['content_field'] . "','" . $dPushT['trx_id'] . "','" . $dPushT['trx_date'] . "','" . $dPushT['session_id'] . "','" . $dPushT['session_date'] . "','" . $dPushT['reg_type'] . "','" . $dPushT['type'] . "','" . $dPushT['send_status'] . "','" . $dPushT['response_code'] . "','" . $dPushT['subject'] . "')";
+                    . "(telco,shortcode,msisdn,sms_field,keyword,content_number,content_field,trx_id,trx_date,session_id,session_date,reg_type,type,send_status,response_code,subject,date_create) "
+                    . "VALUES ('" . $dPushT['telco'] . "','" . $dPushT['shortcode'] . "','" . $dPushT['msisdn'] . "','" . $dPushT['sms_field'] . "','" . $dPushT['keyword'] . "','" . $dPushT['content_number'] . "','" . $dPushT['content_field'] . "','" . $dPushT['trx_id'] . "','" . $dPushT['trx_date'] . "','" . $dPushT['session_id'] . "','" . $dPushT['session_date'] . "','" . $dPushT['reg_type'] . "','" . $dPushT['type'] . "','" . $dPushT['send_status'] . "','" . $dPushT['response_code'] . "','" . $dPushT['subject'] . "','" . $now . "')";
             $savePushtoDatePush = $this->dblog->query($querySavePush);
             if ($savePushtoDatePush->numRows() > 0) {
                 $queryDeletePush = "DELETE FROM tb_push_today WHERE id_push = '" . $dPushT['id_push'] . "'";

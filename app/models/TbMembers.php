@@ -35,10 +35,17 @@ class TbMembers extends \Phalcon\Mvc\Model
 
     /**
      *
+     * @var integer
+     * @Column(type="integer", length=11, nullable=true)
+     */
+    public $id_app;
+
+    /**
+     *
      * @var string
      * @Column(type="string", length=100, nullable=true)
      */
-    public $app;
+    public $keyword;
 
     /**
      *

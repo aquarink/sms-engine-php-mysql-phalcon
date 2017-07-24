@@ -23,6 +23,28 @@ class MoTask extends \Phalcon\CLI\Task {
                                 $expldData = explode("|", $dataFile);
                                 // Close Read File Session
                                 fclose($theFile);
+
+                                $checkTableMo = "SHOW TABLES LIKE 'tb_mo_today'";
+                                $ckTabMo = $this->dblog->query($checkTableMo);
+                                $tableDataMo = $ckTabMo->numRows();
+                                if ($tableDataMo == 0) {
+                                    $createTableMo = "CREATE TABLE tb_mo_today (
+                                    id_mo INT(11) NOT NULL AUTO_INCREMENT,
+                                    telco VARCHAR(20) DEFAULT NULL,
+                                    shortcode VARCHAR(20) DEFAULT NULL,
+                                    msisdn VARCHAR(20) DEFAULT NULL,
+                                    sms_field VARCHAR(200) DEFAULT NULL,
+                                    keyword VARCHAR(50) DEFAULT NULL,
+                                    trx_id VARCHAR(50) DEFAULT NULL,
+                                    trx_date VARCHAR(50) DEFAULT NULL,
+                                    session_id VARCHAR(50) DEFAULT NULL,
+                                    session_date VARCHAR(50) DEFAULT NULL,
+                                    reg_type VARCHAR(10) DEFAULT NULL,
+                                    PRIMARY KEY (id_mo))";
+                                    $this->dblog->query($createTableMo);
+                                }
+
+
                                 if ($expldData[9] == "unreg") {
 //                                [0] => xl
 //                                [1] => 912345

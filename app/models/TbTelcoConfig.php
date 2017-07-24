@@ -28,6 +28,13 @@ class TbTelcoConfig extends \Phalcon\Mvc\Model
 
     /**
      *
+     * @var integer
+     * @Column(type="integer", length=11, nullable=true)
+     */
+    public $pull_limit;
+
+    /**
+     *
      * @var string
      * @Column(type="string", length=250, nullable=true)
      */

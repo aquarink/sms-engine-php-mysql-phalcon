@@ -1,6 +1,6 @@
 <?php
 
-class TbKeyword extends \Phalcon\Mvc\Model
+class TbPartner extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -8,44 +8,30 @@ class TbKeyword extends \Phalcon\Mvc\Model
      * @var integer
      * @Primary
      * @Identity
-     * @Column(type="integer", length=11, nullable=false)
+     * @Column(type="integer", length=8, nullable=false)
      */
-    public $id_keyword;
+    public $id;
 
     /**
      *
      * @var integer
-     * @Column(type="integer", length=11, nullable=true)
+     * @Column(type="integer", length=8, nullable=true)
      */
-    public $id_app;
+    public $id_partner;
 
     /**
      *
      * @var string
      * @Column(type="string", length=100, nullable=true)
      */
-    public $telco;
+    public $name_partner;
 
     /**
      *
      * @var string
-     * @Column(type="string", length=100, nullable=true)
+     * @Column(type="string", nullable=true)
      */
-    public $shortcode;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=100, nullable=true)
-     */
-    public $keyword;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=10, nullable=true)
-     */
-    public $keyword_status;
+    public $datetime;
 
     /**
      * Initialize method for model.
@@ -62,14 +48,14 @@ class TbKeyword extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'tb_keyword';
+        return 'tb_partner';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return TbKeyword[]|TbKeyword|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return TbPartner[]|TbPartner|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -80,7 +66,7 @@ class TbKeyword extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return TbKeyword|\Phalcon\Mvc\Model\ResultInterface
+     * @return TbPartner|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {

@@ -6,7 +6,8 @@ class DailycleanTask extends \Phalcon\CLI\Task {
 
     public function MainAction() {
         $toDay = date('Y_m_d', strtotime(' -1 day'));
-
+        $thisMonth = date('Y_m');
+        $now = date('Y-m-d');
 
         ///////////
         // MO
@@ -17,7 +18,7 @@ class DailycleanTask extends \Phalcon\CLI\Task {
         $resultMOToday = $this->dblog->query($tbMOToday);
         $dataMOToday = $resultMOToday->fetchAll();
 
-        $tableNameMo = "tb_mo_summary";
+        $tableNameMo = "tb_mo_summary_$thisMonth";
         $checkTableMo = "SHOW TABLES LIKE '$tableNameMo'";
 
         $ckTabMo = $this->dblog->query($checkTableMo);
@@ -66,7 +67,7 @@ class DailycleanTask extends \Phalcon\CLI\Task {
         $resultPUSToday = $this->dblog->query($tbPUSHToday);
         $dataPUSHToday = $resultPUSToday->fetchAll();
 
-        $tableNamePush = "tb_push_summary";
+        $tableNamePush = "tb_push_summary_$thisMonth";
         $checkTablePush = "SHOW TABLES LIKE '$tableNamePush'";
 
         $ckTabPush = $this->dblog->query($checkTablePush);
@@ -92,6 +93,7 @@ class DailycleanTask extends \Phalcon\CLI\Task {
                 send_status VARCHAR(10) DEFAULT NULL,
                 response_code VARCHAR(10) DEFAULT NULL,
                 subject VARCHAR(100) DEFAULT NULL,
+                date_create VARCHAR(20) DEFAULT NULL,
                 PRIMARY KEY (id_push))";
 
             $this->dblog->query($createTablePush);
@@ -99,8 +101,8 @@ class DailycleanTask extends \Phalcon\CLI\Task {
 
         foreach ($dataPUSHToday as $dPushT) {
             $querySavePush = "INSERT INTO $tableNamePush "
-                    . "(telco,shortcode,msisdn,sms_field,keyword,content_number,content_field,trx_id,trx_date,session_id,session_date,reg_type,type,send_status,response_code,subject) "
-                    . "VALUES ('" . $dPushT['telco'] . "','" . $dPushT['shortcode'] . "','" . $dPushT['msisdn'] . "','" . $dPushT['sms_field'] . "','" . $dPushT['keyword'] . "','" . $dPushT['content_number'] . "','" . $dPushT['content_field'] . "','" . $dPushT['trx_id'] . "','" . $dPushT['trx_date'] . "','" . $dPushT['session_id'] . "','" . $dPushT['session_date'] . "','" . $dPushT['reg_type'] . "','" . $dPushT['type'] . "','" . $dPushT['send_status'] . "','" . $dPushT['response_code'] . "','" . $dPushT['subject'] . "')";
+                    . "(telco,shortcode,msisdn,sms_field,keyword,content_number,content_field,trx_id,trx_date,session_id,session_date,reg_type,type,send_status,response_code,subject,date_create) "
+                    . "VALUES ('" . $dPushT['telco'] . "','" . $dPushT['shortcode'] . "','" . $dPushT['msisdn'] . "','" . $dPushT['sms_field'] . "','" . $dPushT['keyword'] . "','" . $dPushT['content_number'] . "','" . $dPushT['content_field'] . "','" . $dPushT['trx_id'] . "','" . $dPushT['trx_date'] . "','" . $dPushT['session_id'] . "','" . $dPushT['session_date'] . "','" . $dPushT['reg_type'] . "','" . $dPushT['type'] . "','" . $dPushT['send_status'] . "','" . $dPushT['response_code'] . "','" . $dPushT['subject'] . "','" . $now . "')";
 
             $savePushtoDatePush = $this->dblog->query($querySavePush);
             if ($savePushtoDatePush->numRows() > 0) {
@@ -122,7 +124,7 @@ class DailycleanTask extends \Phalcon\CLI\Task {
         $resultDRToday = $this->dblog->query($tbDRToday);
         $dataDRToday = $resultDRToday->fetchAll();
 
-        $tableNameDr = "tb_dr_summary";
+        $tableNameDr = "tb_dr_summary_$thisMonth";
         $checkTableDr = "SHOW TABLES LIKE '$tableNameDr'";
 
         $ckTabDr = $this->dblog->query($checkTableDr);

@@ -20,10 +20,26 @@ class DrTask extends \Phalcon\CLI\Task {
                             $theFile = fopen($projectFolder . "/" . $entry, "r");
                             if ($theFile) {
                                 $dataFile = fread($theFile, filesize($projectFolder . "/" . $entry));
+                                $expldData = explode("|", $dataFile);
                                 fclose($theFile);
 
-                                $expldData = explode("|", $dataFile);
-                                //xl|98900|6285966655260|987654320|2017-05-12|69242567|2|2017-07-11 10:19:25
+                                $checkTableDr = "SHOW TABLES LIKE 'tb_dr_today'";
+                                $ckTabDr = $this->dblog->query($checkTableDr);
+                                $tableDataDr = $ckTabDr->numRows();
+                                if ($tableDataDr == 0) {
+                                    $createTableDr = "CREATE TABLE tb_dr_today (
+                                    id_dr INT(11) NOT NULL AUTO_INCREMENT,
+                                    telco VARCHAR(20) DEFAULT NULL,
+                                    shortcode VARCHAR(20) DEFAULT NULL,
+                                    msisdn VARCHAR(20) DEFAULT NULL,
+                                    trx_id VARCHAR(50) DEFAULT NULL,
+                                    trx_date VARCHAR(50) DEFAULT NULL,
+                                    session_id VARCHAR(50) DEFAULT NULL,
+                                    session_date VARCHAR(50) DEFAULT NULL,
+                                    stat VARCHAR(10) DEFAULT NULL,
+                                    PRIMARY KEY (id_dr))";
+                                    $this->dblog->query($createTableDr);
+                                }
 
                                 $drLog = new TbDrToday();
 

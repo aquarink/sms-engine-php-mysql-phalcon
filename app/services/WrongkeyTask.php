@@ -35,7 +35,7 @@ class WrongkeyTask extends \Phalcon\CLI\Task {
 //                            [8] => 2017-07-22 04:36:09
 //                            [9] => non reg             reg/unreg
 
-                                $contentPush = $expldData[0] . '|' . $expldData[1] . '|' . $expldData[2] . '|not found|' . $expldData[3] . '|' . $expldData[4] . '||' . $expldData[6] . '|' . $expldData[7] . '|' . $expldData[8] . '|' . $expldData[9] . '|0|Format atau keyword yang anda kirim salah|1|PUll|0|1|PUSH;IOD;WRONGKEYWORD|not-found';
+                                $contentPush = $expldData[0] . '|' . $expldData[1] . '|' . $expldData[2] . '|0|not-found|' . $expldData[4] . '|' . $expldData[5] . '|' . $expldData[6] . '|' . $expldData[7] . '|' . $expldData[8] . '|' . $expldData[9] . '|0|Format atau keyword yang anda kirim salah|1|PULL|0|1|REG;IOD;ERROR';
 
                                 $pushFolder = $path . '/filesystem/push';
                                 $pushTelco = $pushFolder . '/' . $expldData[0] . '/pull';
