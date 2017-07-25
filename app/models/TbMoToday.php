@@ -1,6 +1,6 @@
 <?php
 
-class TbMembers extends \Phalcon\Mvc\Model
+class TbMoToday extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -10,19 +10,19 @@ class TbMembers extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $id_member;
+    public $id_mo;
 
     /**
      *
      * @var string
-     * @Column(type="string", length=100, nullable=true)
+     * @Column(type="string", length=20, nullable=true)
      */
     public $telco;
 
     /**
      *
      * @var string
-     * @Column(type="string", length=100, nullable=true)
+     * @Column(type="string", length=20, nullable=true)
      */
     public $shortcode;
 
@@ -35,6 +35,13 @@ class TbMembers extends \Phalcon\Mvc\Model
 
     /**
      *
+     * @var string
+     * @Column(type="string", length=200, nullable=true)
+     */
+    public $sms_field;
+
+    /**
+     *
      * @var integer
      * @Column(type="integer", length=11, nullable=true)
      */
@@ -43,7 +50,7 @@ class TbMembers extends \Phalcon\Mvc\Model
     /**
      *
      * @var string
-     * @Column(type="string", length=100, nullable=true)
+     * @Column(type="string", length=50, nullable=true)
      */
     public $keyword;
 
@@ -52,35 +59,42 @@ class TbMembers extends \Phalcon\Mvc\Model
      * @var string
      * @Column(type="string", length=50, nullable=true)
      */
-    public $join_date;
+    public $trx_id;
 
     /**
      *
      * @var string
      * @Column(type="string", length=50, nullable=true)
      */
-    public $end_date;
+    public $trx_date;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=50, nullable=true)
+     */
+    public $session_id;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=50, nullable=true)
+     */
+    public $session_date;
 
     /**
      *
      * @var string
      * @Column(type="string", length=10, nullable=true)
      */
-    public $reg_types;
-
-    /**
-     *
-     * @var integer
-     * @Column(type="integer", length=11, nullable=true)
-     */
-    public $content_seq;
+    public $reg_type;
 
     /**
      * Initialize method for model.
      */
     public function initialize()
     {
-        $this->setSchema("smsgw_engine_db");
+        $this->setSchema("smsgw_engine_log");
     }
 
     /**
@@ -90,14 +104,14 @@ class TbMembers extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'tb_members';
+        return 'tb_mo_today';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return TbMembers[]|TbMembers|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return TbMoToday[]|TbMoToday|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -108,7 +122,7 @@ class TbMembers extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return TbMembers|\Phalcon\Mvc\Model\ResultInterface
+     * @return TbMoToday|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {

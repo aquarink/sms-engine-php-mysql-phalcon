@@ -8,6 +8,7 @@ class DailycleanTask extends \Phalcon\CLI\Task {
         $toDay = date('Y_m_d', strtotime(' -1 day'));
         $thisMonth = date('Y_m');
         $now = date('Y-m-d');
+        $nowFull = date("Y-m-d h:i:s");
 
         ///////////
         // MO
@@ -80,6 +81,7 @@ class DailycleanTask extends \Phalcon\CLI\Task {
                 shortcode VARCHAR(20) DEFAULT NULL,
                 msisdn VARCHAR(20) DEFAULT NULL,
                 sms_field VARCHAR(200) DEFAULT NULL,
+                id_app INT(11) DEFAULT NULL,
                 keyword VARCHAR(100) DEFAULT NULL,
                 content_number INT(11) DEFAULT NULL,
                 content_field VARCHAR(200) DEFAULT NULL,
@@ -101,8 +103,8 @@ class DailycleanTask extends \Phalcon\CLI\Task {
 
         foreach ($dataPUSHToday as $dPushT) {
             $querySavePush = "INSERT INTO $tableNamePush "
-                    . "(telco,shortcode,msisdn,sms_field,keyword,content_number,content_field,trx_id,trx_date,session_id,session_date,reg_type,type,send_status,response_code,subject,date_create) "
-                    . "VALUES ('" . $dPushT['telco'] . "','" . $dPushT['shortcode'] . "','" . $dPushT['msisdn'] . "','" . $dPushT['sms_field'] . "','" . $dPushT['keyword'] . "','" . $dPushT['content_number'] . "','" . $dPushT['content_field'] . "','" . $dPushT['trx_id'] . "','" . $dPushT['trx_date'] . "','" . $dPushT['session_id'] . "','" . $dPushT['session_date'] . "','" . $dPushT['reg_type'] . "','" . $dPushT['type'] . "','" . $dPushT['send_status'] . "','" . $dPushT['response_code'] . "','" . $dPushT['subject'] . "','" . $now . "')";
+                    . "(telco,shortcode,msisdn,sms_field,id_app,keyword,content_number,content_field,trx_id,trx_date,session_id,session_date,reg_type,type,cost,send_status,response_code,subject,date_create) "
+                    . "VALUES ('" . $dPushT['telco'] . "','" . $dPushT['shortcode'] . "','" . $dPushT['msisdn'] . "','" . $dPushT['sms_field'] . "','" . $dPushT['id_app'] . "','" . $dPushT['keyword'] . "','" . $dPushT['content_number'] . "','" . $dPushT['content_field'] . "','" . $dPushT['trx_id'] . "','" . $dPushT['trx_date'] . "','" . $dPushT['session_id'] . "','" . $dPushT['session_date'] . "','" . $dPushT['reg_type'] . "','" . $dPushT['type'] . "','" . $dPushT['cost'] . "','" . $dPushT['send_status'] . "','" . $dPushT['response_code'] . "','" . $dPushT['subject'] . "','" . $now . "')";
 
             $savePushtoDatePush = $this->dblog->query($querySavePush);
             if ($savePushtoDatePush->numRows() > 0) {
@@ -158,6 +160,76 @@ class DailycleanTask extends \Phalcon\CLI\Task {
 //                if ($deleteTbDrDate->numRows() > 0) {
                 echo date('Y-m-d h:i:s') . " : Copy data tb_dr_$toDay to $tableNameDr success \n";
 //                }
+            }
+        }
+
+
+
+        /////////////////
+        // REPORT SUMMARY
+        ////////////////
+
+        $checkEmpty = $this->dblog->query("SELECT id_push FROM tb_push_today");
+        if ($checkEmpty->numRows() == 0 || empty($checkEmpty->numRows())) {
+            //
+            $tbPUSHPrev = "SELECT * FROM tb_push_$toDay";
+            $resultPUSPrev = $this->dblog->query($tbPUSHPrev);
+            $dataPUSHPrev = $resultPUSPrev->fetchAll();
+            //
+            foreach ($dataPUSHPrev as $dPush) {
+
+                $querySummary = "SELECT id_app,telco,shortcode,type,cost,subject, IF(send_status = '2', 'Deliver','Rejected') AS dr_stat, COUNT(id_push) AS total,date_create,send_status,response_code
+                FROM tb_push_$toDay WHERE
+                telco = '" . $dPush['telco'] . "' AND shortcode = '" . $dPush['shortcode'] . "' AND type = '" . $dPush['type'] . "' AND cost = '" . $dPush['cost'] . "' AND send_status = '" . $dPush['send_status'] . "' AND response_code = '" . $dPush['response_code'] . "' AND subject = '" . $dPush['subject'] . "'
+                GROUP BY telco,shortcode,id_app,type,cost,send_status,response_code,subject";
+
+                $resultSummary = $this->dblog->query($querySummary);
+                $dataSummary = $resultSummary->fetchAll();
+
+                foreach ($dataSummary as $dataInsert) {
+//                    [id_app] => 2
+//                    [0] => 2
+//                    [telco] => xl
+//                    [1] => xl
+//                    [shortcode] => 912345
+//                    [2] => 912345
+//                    [TYPE] => push
+//                    [3] => push
+//                    [cost] => 1000
+//                    [4] => 1000
+//                    [SUBJECT] => PUSH;IOD;BOLA;RETRY1
+//                    [5] => PUSH;IOD;BOLA;RETRY1
+//                    [dr_stat] => Deliver
+//                    [6] => Deliver
+//                    [total] => 1
+//                    [7] => 1
+//                    [date_create] => 2017-07-25
+//                    [8] => 2017-07-25
+//                    [send_status] => 1
+//                    [9] => 1
+//                    [response_code] => 3
+//                    [10] => 3
+
+                    $reportPush = new TbReportPush();
+                    $reportPush->assign(array(
+                        'id_app' => $dataInsert['id_app'],
+                        'telco' => $dataInsert['telco'],
+                        'shortcode' => $dataInsert['shortcode'],
+                        'type' => $dataInsert['type'],
+                        'cost' => $dataInsert['cost'],
+                        'subject' => $dataInsert['subject'],
+                        'dr_status' => $dataInsert['send_status'],
+                        'hit_status' => $dataInsert['response_code'],
+                        'stat' => $dataInsert['dr_stat'],
+                        'total' => $dataInsert['total'],
+                        'report_date' => $dataInsert['date_create'],
+                        'report_create' => $nowFull,
+                            )
+                    );
+                    if ($reportPush->save()) {
+                        echo date('Y-m-d h:i:s') . " : Insert report push Ok \n";
+                    }
+                }
             }
         }
     }

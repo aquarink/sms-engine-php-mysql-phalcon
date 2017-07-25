@@ -53,6 +53,8 @@ class PushxlTask extends \Phalcon\CLI\Task {
                     //echo $createTable;
 
                     $createExe = $this->dblog->query($createTable);
+                } else {
+                    echo 'sudah ada ';
                 }
 
                 //Telco Config
@@ -116,7 +118,7 @@ class PushxlTask extends \Phalcon\CLI\Task {
 
                                 $resCode = $configData['error']['@attributes']['code'];
                                 $resTxrid = $configData['trxid']['@attributes']['id'];
-
+                                
                                 // Insert
                                 $smsPush = array(
                                     'telco' => "'$expldData[0]'",

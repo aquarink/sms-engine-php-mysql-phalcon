@@ -80,6 +80,7 @@ class UpdatecleanTask extends \Phalcon\CLI\Task {
                 shortcode VARCHAR(20) DEFAULT NULL,
                 msisdn VARCHAR(20) DEFAULT NULL,
                 sms_field VARCHAR(200) DEFAULT NULL,
+                id_app INT(11) DEFAULT NULL,
                 keyword VARCHAR(100) DEFAULT NULL,
                 content_number INT(11) DEFAULT NULL,
                 content_field VARCHAR(200) DEFAULT NULL,
@@ -101,8 +102,8 @@ class UpdatecleanTask extends \Phalcon\CLI\Task {
 
         foreach ($dataPUSHToday as $dPushT) {
             $querySavePush = "INSERT INTO $tableNamePush "
-                    . "(telco,shortcode,msisdn,sms_field,keyword,content_number,content_field,trx_id,trx_date,session_id,session_date,reg_type,type,send_status,response_code,subject,date_create) "
-                    . "VALUES ('" . $dPushT['telco'] . "','" . $dPushT['shortcode'] . "','" . $dPushT['msisdn'] . "','" . $dPushT['sms_field'] . "','" . $dPushT['keyword'] . "','" . $dPushT['content_number'] . "','" . $dPushT['content_field'] . "','" . $dPushT['trx_id'] . "','" . $dPushT['trx_date'] . "','" . $dPushT['session_id'] . "','" . $dPushT['session_date'] . "','" . $dPushT['reg_type'] . "','" . $dPushT['type'] . "','" . $dPushT['send_status'] . "','" . $dPushT['response_code'] . "','" . $dPushT['subject'] . "','" . $now . "')";
+                    . "(telco,shortcode,msisdn,sms_field,id_app,keyword,content_number,content_field,trx_id,trx_date,session_id,session_date,reg_type,type,cost,send_status,response_code,subject,date_create) "
+                    . "VALUES ('" . $dPushT['telco'] . "','" . $dPushT['shortcode'] . "','" . $dPushT['msisdn'] . "','" . $dPushT['sms_field'] . "','" . $dPushT['id_app'] . "','" . $dPushT['keyword'] . "','" . $dPushT['content_number'] . "','" . $dPushT['content_field'] . "','" . $dPushT['trx_id'] . "','" . $dPushT['trx_date'] . "','" . $dPushT['session_id'] . "','" . $dPushT['session_date'] . "','" . $dPushT['reg_type'] . "','" . $dPushT['type'] . "','" . $dPushT['cost'] . "','" . $dPushT['send_status'] . "','" . $dPushT['response_code'] . "','" . $dPushT['subject'] . "','" . $now . "')";
             $savePushtoDatePush = $this->dblog->query($querySavePush);
             if ($savePushtoDatePush->numRows() > 0) {
                 $queryDeletePush = "DELETE FROM tb_push_today WHERE id_push = '" . $dPushT['id_push'] . "'";

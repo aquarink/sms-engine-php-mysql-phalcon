@@ -33,6 +33,7 @@ class MoTask extends \Phalcon\CLI\Task {
                                     telco VARCHAR(20) DEFAULT NULL,
                                     shortcode VARCHAR(20) DEFAULT NULL,
                                     msisdn VARCHAR(20) DEFAULT NULL,
+                                    id_app INT(11) DEFAULT NULL,
                                     sms_field VARCHAR(200) DEFAULT NULL,
                                     keyword VARCHAR(50) DEFAULT NULL,
                                     trx_id VARCHAR(50) DEFAULT NULL,
@@ -59,7 +60,8 @@ class MoTask extends \Phalcon\CLI\Task {
 
                                     $pushFolder = $path . '/filesystem/push';
                                     $updateQuery = "UPDATE tb_members SET "
-                                            . "reg_types = '$expldData[9]' WHERE "
+                                            . "reg_types = '$expldData[9]',"
+                                            . "end_date = '$expldData[8]' WHERE "
                                             . "telco = '$expldData[0]' AND "
                                             . "shortcode = '$expldData[1]' AND "
                                             . "msisdn = '$expldData[2]' AND "

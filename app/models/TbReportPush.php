@@ -1,6 +1,6 @@
 <?php
 
-class TbMembers extends \Phalcon\Mvc\Model
+class TbReportPush extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -10,28 +10,7 @@ class TbMembers extends \Phalcon\Mvc\Model
      * @Identity
      * @Column(type="integer", length=11, nullable=false)
      */
-    public $id_member;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=100, nullable=true)
-     */
-    public $telco;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=100, nullable=true)
-     */
-    public $shortcode;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=20, nullable=true)
-     */
-    public $msisdn;
+    public $id_report;
 
     /**
      *
@@ -43,37 +22,72 @@ class TbMembers extends \Phalcon\Mvc\Model
     /**
      *
      * @var string
-     * @Column(type="string", length=100, nullable=true)
+     * @Column(type="string", length=20, nullable=true)
      */
-    public $keyword;
+    public $telco;
 
     /**
      *
      * @var string
-     * @Column(type="string", length=50, nullable=true)
+     * @Column(type="string", length=20, nullable=true)
      */
-    public $join_date;
+    public $shortcode;
 
     /**
      *
      * @var string
-     * @Column(type="string", length=50, nullable=true)
+     * @Column(type="string", length=20, nullable=true)
      */
-    public $end_date;
-
-    /**
-     *
-     * @var string
-     * @Column(type="string", length=10, nullable=true)
-     */
-    public $reg_types;
+    public $type;
 
     /**
      *
      * @var integer
      * @Column(type="integer", length=11, nullable=true)
      */
-    public $content_seq;
+    public $cost;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=100, nullable=true)
+     */
+    public $subject;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=50, nullable=true)
+     */
+    public $dr_status;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=20, nullable=true)
+     */
+    public $hit_status;
+
+    /**
+     *
+     * @var integer
+     * @Column(type="integer", length=11, nullable=true)
+     */
+    public $total;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=500, nullable=true)
+     */
+    public $report_date;
+
+    /**
+     *
+     * @var string
+     * @Column(type="string", length=50, nullable=true)
+     */
+    public $report_create;
 
     /**
      * Initialize method for model.
@@ -90,14 +104,14 @@ class TbMembers extends \Phalcon\Mvc\Model
      */
     public function getSource()
     {
-        return 'tb_members';
+        return 'tb_report_push';
     }
 
     /**
      * Allows to query a set of records that match the specified conditions
      *
      * @param mixed $parameters
-     * @return TbMembers[]|TbMembers|\Phalcon\Mvc\Model\ResultSetInterface
+     * @return TbReportPush[]|TbReportPush|\Phalcon\Mvc\Model\ResultSetInterface
      */
     public static function find($parameters = null)
     {
@@ -108,7 +122,7 @@ class TbMembers extends \Phalcon\Mvc\Model
      * Allows to query the first record that match the specified conditions
      *
      * @param mixed $parameters
-     * @return TbMembers|\Phalcon\Mvc\Model\ResultInterface
+     * @return TbReportPush|\Phalcon\Mvc\Model\ResultInterface
      */
     public static function findFirst($parameters = null)
     {

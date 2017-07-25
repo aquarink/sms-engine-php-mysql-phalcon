@@ -1,6 +1,6 @@
 <?php
 
-$appName = 'bola';
+$appName = 'cantik';
 try {
     $path = getcwd();
     //$path = '/var/www/html/engine';

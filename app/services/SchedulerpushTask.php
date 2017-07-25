@@ -5,8 +5,8 @@ use Phalcon\Mvc\Model\Query;
 class SchedulerpushTask extends \Phalcon\CLI\Task {
 
     public function MainAction() {
-        $prevDay = date('Y_m_d', strtotime(' -1 day'));
         $tbDate = date('Y_m_d');
+        $monthDate = date('Y_m');
         $nowDate = date('Y-m-d');
 
         $path = getcwd();
@@ -25,60 +25,20 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                     if ($element == number_format(date('d'))) {
                         $member = $this->db->query("SELECT * FROM tb_members WHERE id_app = '" . $appConfData['id_app'] . "'");
                         $memberData = $member->fetchAll();
-
                         foreach ($memberData as $memData) {
+                            if (empty($memData['content_seq'])) {
+                                $seqContent = 1;
+                            } else {
+                                $seqContent = $memData['content_seq'] + 1;
+                            }
+
                             $checkSeqOnToday = $this->dblog->query("SELECT * FROM tb_push_today WHERE shortcode = '" . $memData['shortcode'] . "' AND msisdn = '" . $memData['msisdn'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $memData['content_seq'] . "'");
                             if ($checkSeqOnToday->numRows() == 0 || empty($checkSeqOnToday->numRows())) {
 
-                                $checkTableDate = "SHOW TABLES LIKE 'tb_push_$tbDate'";
-                                $ckTabDate = $this->dblog->query($checkTableDate);
-                                $tableDateData = $ckTabDate->numRows();
-                                if ($tableDateData > 0) {
-                                    $checkSeqOnDate = $this->dblog->query("SELECT content_seq FROM tb_push_$tbDate WHERE shortcode = '" . $memData['shortcode'] . "' AND msisdn = '" . $memData['msisdn'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $memData['content_seq'] . "'");
-                                    if ($checkSeqOnDate->numRows() == 0 || empty($checkSeqOnDate->numRows())) {
-                                        // Get Content data by content_seq on member table
-                                        if (empty($memData['content_seq'])) {
-                                            $seqContent = 1;
-                                        } else {
-                                            $seqContent = $memData['content_seq'] + 1;
-                                        }
-                                        $callContent = $this->db->query("SELECT * FROM tb_apps_content WHERE id_app = '" . $appConfData['id_app'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $seqContent . "'");
-                                        $contentDate = $callContent->fetchAll();
+                                $checkSeqOnDate = $this->dblog->query("SELECT * FROM tb_push_$tbDate WHERE shortcode = '" . $memData['shortcode'] . "' AND msisdn = '" . $memData['msisdn'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $memData['content_seq'] . "'");
+                                if ($checkSeqOnDate->numRows() == 0 || empty($checkSeqOnDate->numRows())) {
 
-                                        foreach ($contentDate as $cntent) {
-                                            // SessionID
-                                            $sessionid = rand(1, 99999999);
-                                            //SessionDate
-                                            $sessionDate = date("Y-m-d h:i:s");
-
-                                            $contentPush = $memData['telco'] . "|" . $memData['shortcode'] . "|" . $memData['msisdn'] . "|" . $appConfData['id_app'] . "|" . $memData['keyword'] . "|DAILY PUSH " . strtoupper($memData['keyword']) . "||" . $nowDate . "|" . $sessionid . "|" . $sessionDate . "|reg|" . $cntent['content_number'] . "|" . $cntent['content_field'] . "|1|push|" . $appConfData['cost_push'] . "|1|PUSH;IOD;" . strtoupper($memData['keyword']) . ";DAILYPUSH";
-
-                                            $pushTelco = $pushFolder . '/' . $memData['telco'] . '/push';
-
-                                            if (!file_exists($pushTelco)) {
-                                                mkdir($pushTelco, 0777, true);
-                                            }
-
-                                            chmod($pushTelco, 0777);
-
-                                            $filePush = $pushTelco . '/daily-push-' . $sessionid . '.txt';
-
-                                            $createFilePush = fopen($filePush, "w");
-                                            if ($createFilePush) {
-                                                $fwPush = fwrite($createFilePush, $contentPush);
-                                                if ($fwPush) {
-                                                    echo date('Y-m-d h:i:s') . " : Create daily push file IF Numeric success \n";
-                                                }
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    if (empty($memData['content_seq'])) {
-                                        $seqContent = 1;
-                                    } else {
-                                        $seqContent = $memData['content_seq'] + 1;
-                                    }
-                                    $callContent = $this->db->query("SELECT * FROM tb_apps_content WHERE id_app = '" . $appConfData['id_app'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $seqContent . "'");
+                                    $callContent = $this->db->query("SELECT * FROM tb_apps_content WHERE id_app = '" . $memData['id_app'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $seqContent . "'");
                                     $contentDate = $callContent->fetchAll();
 
                                     foreach ($contentDate as $cntent) {
@@ -87,14 +47,13 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                                         //SessionDate
                                         $sessionDate = date("Y-m-d h:i:s");
 
-                                        $contentPush = $memData['telco'] . "|" . $memData['shortcode'] . "|" . $memData['msisdn'] . "|" . $appConfData['id_app'] . "|" . $memData['keyword'] . "|DAILY PUSH " . strtoupper($memData['keyword']) . "||" . $nowDate . "|" . $sessionid . "|" . $sessionDate . "|reg|" . $cntent['content_number'] . "|" . $cntent['content_field'] . "|1|push|" . $appConfData['cost_push'] . "|1|PUSH;IOD;" . strtoupper($memData['keyword']) . ";DAILYPUSH";
+                                        $contentPush = $memData['telco'] . "|" . $memData['shortcode'] . "|" . $memData['msisdn'] . "|" . $appConfData['id_app'] . "|" . $memData['keyword'] . "|DAILY PUSH " . strtoupper($memData['keyword']) . "||" . $nowDate . "|" . $sessionid . "|" . $sessionDate . "|dailypush|" . $cntent['content_number'] . "|" . $cntent['content_field'] . "|1|push|" . $appConfData['cost_push'] . "|1|PUSH;IOD;" . strtoupper($memData['keyword']) . ";DAILYPUSH";
 
                                         $pushTelco = $pushFolder . '/' . $memData['telco'] . '/push';
 
                                         if (!file_exists($pushTelco)) {
                                             mkdir($pushTelco, 0777, true);
                                         }
-
                                         chmod($pushTelco, 0777);
 
                                         $filePush = $pushTelco . '/daily-push-' . $sessionid . '.txt';
@@ -103,7 +62,7 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                                         if ($createFilePush) {
                                             $fwPush = fwrite($createFilePush, $contentPush);
                                             if ($fwPush) {
-                                                echo date('Y-m-d h:i:s') . " : Create daily push file ELSE Numeric success \n";
+                                                echo date('Y-m-d h:i:s') . " : Create daily push file IF Numeric success \n";
                                             }
                                         }
                                     }
@@ -115,60 +74,20 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                     if ($element == strtolower(date('D'))) {
                         $member = $this->db->query("SELECT * FROM tb_members WHERE id_app = '" . $appConfData['id_app'] . "'");
                         $memberData = $member->fetchAll();
-
                         foreach ($memberData as $memData) {
+                            if (empty($memData['content_seq'])) {
+                                $seqContent = 1;
+                            } else {
+                                $seqContent = $memData['content_seq'] + 1;
+                            }
+
                             $checkSeqOnToday = $this->dblog->query("SELECT * FROM tb_push_today WHERE shortcode = '" . $memData['shortcode'] . "' AND msisdn = '" . $memData['msisdn'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $memData['content_seq'] . "'");
                             if ($checkSeqOnToday->numRows() == 0 || empty($checkSeqOnToday->numRows())) {
 
-                                $checkTableDate = "SHOW TABLES LIKE 'tb_push_$tbDate'";
-                                $ckTabDate = $this->dblog->query($checkTableDate);
-                                $tableDateData = $ckTabDate->numRows();
-                                if ($tableDateData > 0) {
-                                    $checkSeqOnDate = $this->dblog->query("SELECT content_seq FROM tb_push_$tbDate WHERE shortcode = '" . $memData['shortcode'] . "' AND msisdn = '" . $memData['msisdn'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $memData['content_seq'] . "'");
-                                    if ($checkSeqOnDate->numRows() == 0 || empty($checkSeqOnDate->numRows())) {
-                                        // Get Content data by content_seq on member table
-                                        if (empty($memData['content_seq'])) {
-                                            $seqContent = 1;
-                                        } else {
-                                            $seqContent = $memData['content_seq'] + 1;
-                                        }
-                                        $callContent = $this->db->query("SELECT * FROM tb_apps_content WHERE id_app = '" . $appConfData['id_app'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $seqContent . "'");
-                                        $contentDate = $callContent->fetchAll();
+                                $checkSeqOnDate = $this->dblog->query("SELECT * FROM tb_push_$tbDate WHERE shortcode = '" . $memData['shortcode'] . "' AND msisdn = '" . $memData['msisdn'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $memData['content_seq'] . "'");
+                                if ($checkSeqOnDate->numRows() == 0 || empty($checkSeqOnDate->numRows())) {
 
-                                        foreach ($contentDate as $cntent) {
-                                            // SessionID
-                                            $sessionid = rand(1, 99999999);
-                                            //SessionDate
-                                            $sessionDate = date("Y-m-d h:i:s");
-
-                                            $contentPush = $memData['telco'] . "|" . $memData['shortcode'] . "|" . $memData['msisdn'] . "|" . $appConfData['id_app'] . "|" . $memData['keyword'] . "|DAILY PUSH " . strtoupper($memData['keyword']) . "||" . $nowDate . "|" . $sessionid . "|" . $sessionDate . "|reg|" . $cntent['content_number'] . "|" . $cntent['content_field'] . "|1|push|" . $appConfData['cost_push'] . "|1|PUSH;IOD;" . strtoupper($memData['keyword']) . ";DAILYPUSH";
-
-                                            $pushTelco = $pushFolder . '/' . $memData['telco'] . '/push';
-
-                                            if (!file_exists($pushTelco)) {
-                                                mkdir($pushTelco, 0777, true);
-                                            }
-
-                                            chmod($pushTelco, 0777);
-
-                                            $filePush = $pushTelco . '/daily-push-' . $sessionid . '.txt';
-
-                                            $createFilePush = fopen($filePush, "w");
-                                            if ($createFilePush) {
-                                                $fwPush = fwrite($createFilePush, $contentPush);
-                                                if ($fwPush) {
-                                                    echo date('Y-m-d h:i:s') . " : Create daily push file IF Non-Numeric success \n";
-                                                }
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    if (empty($memData['content_seq'])) {
-                                        $seqContent = 1;
-                                    } else {
-                                        $seqContent = $memData['content_seq'] + 1;
-                                    }
-                                    $callContent = $this->db->query("SELECT * FROM tb_apps_content WHERE id_app = '" . $appConfData['id_app'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $seqContent . "'");
+                                    $callContent = $this->db->query("SELECT * FROM tb_apps_content WHERE id_app = '" . $memData['id_app'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $seqContent . "'");
                                     $contentDate = $callContent->fetchAll();
 
                                     foreach ($contentDate as $cntent) {
@@ -177,14 +96,13 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                                         //SessionDate
                                         $sessionDate = date("Y-m-d h:i:s");
 
-                                        $contentPush = $memData['telco'] . "|" . $memData['shortcode'] . "|" . $memData['msisdn'] . "|" . $appConfData['id_app'] . "|" . $memData['keyword'] . "|DAILY PUSH " . strtoupper($memData['keyword']) . "||" . $nowDate . "|" . $sessionid . "|" . $sessionDate . "|reg|" . $cntent['content_number'] . "|" . $cntent['content_field'] . "|1|push|" . $appConfData['cost_push'] . "|1|PUSH;IOD;" . strtoupper($memData['keyword']) . ";DAILYPUSH";
+                                        $contentPush = $memData['telco'] . "|" . $memData['shortcode'] . "|" . $memData['msisdn'] . "|" . $appConfData['id_app'] . "|" . $memData['keyword'] . "|DAILY PUSH " . strtoupper($memData['keyword']) . "||" . $nowDate . "|" . $sessionid . "|" . $sessionDate . "|dailypush|" . $cntent['content_number'] . "|" . $cntent['content_field'] . "|1|push|" . $appConfData['cost_push'] . "|1|PUSH;IOD;" . strtoupper($memData['keyword']) . ";DAILYPUSH";
 
                                         $pushTelco = $pushFolder . '/' . $memData['telco'] . '/push';
 
                                         if (!file_exists($pushTelco)) {
                                             mkdir($pushTelco, 0777, true);
                                         }
-
                                         chmod($pushTelco, 0777);
 
                                         $filePush = $pushTelco . '/daily-push-' . $sessionid . '.txt';
@@ -193,7 +111,7 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                                         if ($createFilePush) {
                                             $fwPush = fwrite($createFilePush, $contentPush);
                                             if ($fwPush) {
-                                                echo date('Y-m-d h:i:s') . " : Create daily push file ELSE Non-Numeric success \n";
+                                                echo date('Y-m-d h:i:s') . " : Create daily push file IF Non-Numeric success \n";
                                             }
                                         }
                                     }

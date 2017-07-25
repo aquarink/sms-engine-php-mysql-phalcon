@@ -6,60 +6,123 @@ class RetrypushTask extends \Phalcon\CLI\Task {
 
     // php app/cli.php mo
     public function MainAction() {
-        while (true) {
-            try {
-                $path = getcwd();
-                //$path = '/var/www/html/engine';
+        $tbDate = date('Y_m_d');
+        //while (true) {
+        try {
+            $path = getcwd();
+            //$path = '/var/www/html/engine';
 
-                $projectFolder = $path . '/filesystem/retry';
+            $pushTelcoFolder = $path . '/filesystem/push/';
 
-                if ($handle = opendir($projectFolder)) {
-                    while (false !== ($entry = readdir($handle))) {
-                        if ($entry != '.' && $entry != '..') {
-                            // Read File
-                            $theFile = fopen($projectFolder . "/" . $entry, "r");
-                            if ($theFile) {
-                                $dataFile = fread($theFile, filesize($projectFolder . "/" . $entry));
-                                $expldData = explode("|", $dataFile);
-                                fclose($theFile);
-//                            [0] => xl
-//                            [1] => 912345
-//                            [2] => 6281966655242
-//                            [3] => bola
-//                            [4] => DAILY PUSH BOLA
-//                            [5] =>
-//                            [6] => 2017-07-21
-//                            [7] => 26021626
-//                            [8] => 2017-07-21 04:55:06
-//                            [9] => reg
-//                            [10] => 2
-//                            [11] => Reply Bola Kedua
-//                            [12] => 1
-//                            [13] => push
-//                            [14] => 10000
-//                            [15] => 1
-//                            [16] => PUSH; IOD; BOLA; DAILYPUSH; RETRY
-//                            [17] => 1;
+            $checkOnToday = $this->dblog->query("SELECT * FROM tb_push_today WHERE send_status != 2");
+            if ($checkOnToday->numRows() > 0 || !empty($checkOnToday->numRows())) {
 
-                                $retryPushPath = $path . '/filesystem/push/' . $expldData[0] . '/push';
-                                if (!file_exists($retryPushPath)) {
-                                    mkdir($retryPushPath, 0777, true);
-                                }
-                                chmod($retryPushPath, 0777);
+                foreach ($checkOnToday->fetchAll() as $pushRetry) {
+                    // SessionID
+                    $sessionid = rand(1, 99999999);
+                    //SessionDate
+                    $sessionDate = date("Y-m-d h:i:s");
 
-                                if (rename($projectFolder . "/" . $entry, $retryPushPath . '/' . $entry)) {
-                                    echo date('Y-m-d h:i:s') . " : Move Retry File to Push \n";
-                                }
+                    if ($pushRetry[13] == 'retry1') {
+                        $regType = 'retry2';
+                        $fields = explode(';', $pushRetry[18]);
+                        $index = count($fields) - 1;
+                        if (count($fields) > 3) {
+                            $fields[$index] = 'RETRY2';
+                            $subject = join(';', $fields);
+                        } else {
+                            $subject = $pushRetry[18] . ';RETRY2';
+                        }
+                    } else {
+                        $regType = 'retry1';
+                        $fields = explode(';', $pushRetry[18]);
+                        $index = count($fields) - 1;
+                        if (count($fields) > 3) {
+                            $fields[$index] = 'RETRY1';
+                            $subject = join(';', $fields);
+                        } else {
+                            $subject = $pushRetry[18] . ';RETRY1';
+                        }
+                    }
+
+                    $contentPush = $pushRetry[1] . "|" . $pushRetry[2] . "|" . $pushRetry[3] . "|" . $pushRetry[5] . "|" . $pushRetry[6] . "|" . $pushRetry[4] . "||" . $pushRetry[10] . "|" . $sessionid . "|" . $sessionDate . "|" . $regType . "|" . $pushRetry[7] . "|" . $pushRetry[8] . "|1|push|" . $pushRetry[15] . "|1|" . $subject;
+
+                    $pushTelco = $pushTelcoFolder . '/' . $pushRetry[1] . '/push';
+
+                    if (!file_exists($pushTelco)) {
+                        mkdir($pushTelco, 0777, true);
+                    }
+                    chmod($pushTelco, 0777);
+
+                    $filePush = $pushTelco . '/retry-push-' . $sessionid . '.txt';
+
+                    $createFilePush = fopen($filePush, "w");
+                    if ($createFilePush) {
+                        $fwPush = fwrite($createFilePush, $contentPush);
+                        if ($fwPush) {
+                            echo date('Y-m-d h:i:s') . " : Create retry push from tb_push_today success \n";
+                        }
+                    }
+                }
+            } else {
+                $checkOnDate = $this->dblog->query("SELECT * FROM tb_push_$tbDate WHERE send_status != 2");
+                if ($checkOnDate->numRows() > 0 || !empty($checkOnDate->numRows())) {
+
+                    foreach ($checkOnDate->fetchAll() as $pushRetry) {
+                        /// SessionID
+                        $sessionid = rand(1, 99999999);
+                        //SessionDate
+                        $sessionDate = date("Y-m-d h:i:s");
+
+                        if ($pushRetry[13] == 'retry1') {
+                            $regType = 'retry2';
+                            $fields = explode(';', $pushRetry[18]);
+                            $index = count($fields) - 1;
+                            if (count($fields) > 3) {
+                                $fields[$index] = 'RETRY2';
+                                $subject = join(';', $fields);
+                            } else {
+                                $subject = $pushRetry[18] . ';RETRY2';
+                            }
+                        } else {
+                            $regType = 'retry1';
+                            $fields = explode(';', $pushRetry[18]);
+                            $index = count($fields) - 1;
+                            if (count($fields) > 3) {
+                                $fields[$index] = 'RETRY1';
+                                $subject = join(';', $fields);
+                            } else {
+                                $subject = $pushRetry[18] . ';RETRY1';
+                            }
+                        }
+
+                        $contentPush = $pushRetry[1] . "|" . $pushRetry[2] . "|" . $pushRetry[3] . "|" . $pushRetry[5] . "|" . $pushRetry[6] . "|" . $pushRetry[4] . "||" . $pushRetry[10] . "|" . $sessionid . "|" . $sessionDate . "|" . $regType . "|" . $pushRetry[7] . "|" . $pushRetry[8] . "|1|push|" . $pushRetry[15] . "|1|" . $subject;
+
+
+                        $pushTelco = $pushTelcoFolder . '/' . $pushRetry[1] . '/push';
+
+                        if (!file_exists($pushTelco)) {
+                            mkdir($pushTelco, 0777, true);
+                        }
+                        chmod($pushTelco, 0777);
+
+                        $filePush = $pushTelco . '/retry-push-' . $sessionid . '.txt';
+
+                        $createFilePush = fopen($filePush, "w");
+                        if ($createFilePush) {
+                            $fwPush = fwrite($createFilePush, $contentPush);
+                            if ($fwPush) {
+                                echo date('Y-m-d h:i:s') . " : Create retry push from tb_push_$tbDate success \n";
                             }
                         }
                     }
-                    closedir($handle);
                 }
-            } catch (\Exception $e) {
-                echo date('Y-m-d h:i:s') . " : Error try catch $e \n";
             }
-            sleep(1);
+        } catch (\Exception $e) {
+            echo date('Y-m-d h:i:s') . " : Error try catch $e \n";
         }
+        //sleep(1);
+        //}
     }
 
 }

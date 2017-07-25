@@ -11,6 +11,8 @@ class DrTask extends \Phalcon\CLI\Task {
                 $path = getcwd();
                 //$path = '/var/www/html/engine';
 
+                $tbDate = date('Y_m_d');
+
                 $projectFolder = $path . '/filesystem/dr';
                 if ($handle = opendir($projectFolder)) {
                     while (false !== ($entry = readdir($handle))) {
@@ -41,28 +43,62 @@ class DrTask extends \Phalcon\CLI\Task {
                                     $this->dblog->query($createTableDr);
                                 }
 
-                                $drLog = new TbDrToday();
+                                $checkQueryToday = "SELECT id_push FROM tb_push_today WHERE telco = '$expldData[0]' AND shortcode = '$expldData[1]' AND msisdn = '$expldData[2]' AND trx_id = '$expldData[3]'";
+                                $resultToday = $this->dblog->query($checkQueryToday);
+                                if ($resultToday->numRows() == 0 || empty($resultToday->numRows())) {
 
-                                $drLog->assign(array(
-                                    'telco' => $expldData[0],
-                                    'shortcode' => $expldData[1],
-                                    'msisdn' => $expldData[2],
-                                    'trx_id' => $expldData[3],
-                                    'trx_date' => $expldData[4],
-                                    'session_id' => $expldData[5],
-                                    'session_date' => $expldData[7],
-                                    'stat' => $expldData[6]
-                                        )
-                                );
-                                if ($drLog->save()) {
-                                    // Update tb_push_today
-                                    $updateQuery = "UPDATE tb_push_today SET "
-                                            . "send_status = '$expldData[6]' WHERE "
-                                            . "trx_id = '$expldData[3]'";
-                                    $result = $this->dblog->query($updateQuery);
-                                    if ($result) {
-                                        if (unlink($projectFolder . "/" . $entry)) {
-                                            echo date('Y-m-d h:i:s') . " : Insert DR Log & DR File Unlink Success \n";
+                                    $checkQueryDate = "SELECT id_push FROM tb_push_$tbDate WHERE telco = '$expldData[0]' AND shortcode = '$expldData[1]' AND msisdn = '$expldData[2]' AND trx_id = '$expldData[3]'";
+                                    $resultDate = $this->dblog->query($checkQueryDate);
+                                    if ($resultDate->numRows() > 0 || !empty($resultDate->numRows())) {
+
+                                        $drLog = new TbDrToday();
+                                        $drLog->assign(array(
+                                            'telco' => $expldData[0],
+                                            'shortcode' => $expldData[1],
+                                            'msisdn' => $expldData[2],
+                                            'trx_id' => $expldData[3],
+                                            'trx_date' => $expldData[4],
+                                            'session_id' => $expldData[5],
+                                            'session_date' => $expldData[7],
+                                            'stat' => $expldData[6]
+                                                )
+                                        );
+                                        if ($drLog->save()) {
+                                            // Update tb_push_today
+                                            $updateQuery = "UPDATE tb_push_$tbDate SET "
+                                                    . "send_status = '$expldData[6]' WHERE "
+                                                    . "trx_id = '$expldData[3]'";
+                                            $result = $this->dblog->query($updateQuery);
+                                            if ($result) {
+                                                if (unlink($projectFolder . "/" . $entry)) {
+                                                    echo date('Y-m-d h:i:s') . " : Insert DR Log & DR File Unlink On tb_push_$tbDate Success \n";
+                                                }
+                                            }
+                                        }
+                                    } // Data tidak / belum ada
+                                } else {
+                                    $drLog = new TbDrToday();
+                                    $drLog->assign(array(
+                                        'telco' => $expldData[0],
+                                        'shortcode' => $expldData[1],
+                                        'msisdn' => $expldData[2],
+                                        'trx_id' => $expldData[3],
+                                        'trx_date' => $expldData[4],
+                                        'session_id' => $expldData[5],
+                                        'session_date' => $expldData[7],
+                                        'stat' => $expldData[6]
+                                            )
+                                    );
+                                    if ($drLog->save()) {
+                                        // Update tb_push_today
+                                        $updateQuery = "UPDATE tb_push_today SET "
+                                                . "send_status = '$expldData[6]' WHERE "
+                                                . "trx_id = '$expldData[3]'";
+                                        $result = $this->dblog->query($updateQuery);
+                                        if ($result) {
+                                            if (unlink($projectFolder . "/" . $entry)) {
+                                                echo date('Y-m-d h:i:s') . " : Insert DR Log & DR File Unlink On tb_push_today Success \n";
+                                            }
                                         }
                                     }
                                 }
