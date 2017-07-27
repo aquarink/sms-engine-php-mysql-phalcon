@@ -53,8 +53,6 @@ class PushxlTask extends \Phalcon\CLI\Task {
                     //echo $createTable;
 
                     $createExe = $this->dblog->query($createTable);
-                } else {
-                    echo 'sudah ada ';
                 }
 
                 //Telco Config

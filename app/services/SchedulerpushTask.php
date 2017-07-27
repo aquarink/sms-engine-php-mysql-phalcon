@@ -19,7 +19,7 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
         $dataAppConf = $resAppConf->fetchAll();
 
         foreach ($dataAppConf as $appConfData) {
-            $explPushTime = explode(',', $appConfData['push_time']);
+            $explPushTime = explode(',', $appConfData['push_day']);
             foreach ($explPushTime as $element) {
                 if (is_numeric($element)) {
                     if ($element == number_format(date('d'))) {
@@ -31,24 +31,19 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                             } else {
                                 $seqContent = $memData['content_seq'] + 1;
                             }
-
+                            //
                             $checkSeqOnToday = $this->dblog->query("SELECT * FROM tb_push_today WHERE shortcode = '" . $memData['shortcode'] . "' AND msisdn = '" . $memData['msisdn'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $memData['content_seq'] . "'");
                             if ($checkSeqOnToday->numRows() == 0 || empty($checkSeqOnToday->numRows())) {
-
-                                $checkSeqOnDate = $this->dblog->query("SELECT * FROM tb_push_$tbDate WHERE shortcode = '" . $memData['shortcode'] . "' AND msisdn = '" . $memData['msisdn'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $memData['content_seq'] . "'");
-                                if ($checkSeqOnDate->numRows() == 0 || empty($checkSeqOnDate->numRows())) {
-
-                                    $callContent = $this->db->query("SELECT * FROM tb_apps_content WHERE id_app = '" . $memData['id_app'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $seqContent . "'");
-                                    $contentDate = $callContent->fetchAll();
-
-                                    foreach ($contentDate as $cntent) {
-                                        // SessionID
+                                
+                                $callContent = $this->db->query("SELECT * FROM tb_apps_content WHERE id_app = '" . $memData['id_app'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $seqContent . "'");
+                                if ($callContent->numRows() > 0) {
+                                    foreach ($callContent->fetchAll() as $cntent) {
+                                        //SessionID
                                         $sessionid = rand(1, 99999999);
                                         //SessionDate
                                         $sessionDate = date("Y-m-d h:i:s");
 
                                         $contentPush = $memData['telco'] . "|" . $memData['shortcode'] . "|" . $memData['msisdn'] . "|" . $appConfData['id_app'] . "|" . $memData['keyword'] . "|DAILY PUSH " . strtoupper($memData['keyword']) . "||" . $nowDate . "|" . $sessionid . "|" . $sessionDate . "|dailypush|" . $cntent['content_number'] . "|" . $cntent['content_field'] . "|1|push|" . $appConfData['cost_push'] . "|1|PUSH;IOD;" . strtoupper($memData['keyword']) . ";DAILYPUSH";
-
                                         $pushTelco = $pushFolder . '/' . $memData['telco'] . '/push';
 
                                         if (!file_exists($pushTelco)) {
@@ -62,9 +57,14 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                                         if ($createFilePush) {
                                             $fwPush = fwrite($createFilePush, $contentPush);
                                             if ($fwPush) {
-                                                echo date('Y-m-d h:i:s') . " : Create daily push file IF Numeric success \n";
+                                                echo date('Y-m-d h:i:s') . " : Create content $seqContent daily push file IF Date Numeric success \n";
                                             }
                                         }
+                                    }
+                                } else {
+                                    $checkContent = $this->db->query("SELECT MIN(content_number) AS cMin, MAX(content_number) AS cMax FROM tb_apps_content WHERE id_app = '" . $memData['id_app'] . "' AND keyword = '" . $memData['keyword'] . "'");
+                                    foreach ($callContent->fetchAll() as $valCntn) {
+                                        $seqContent = rand($valCntn['cMin'], $valCntn['cMax']);
                                     }
                                 }
                             }
@@ -80,24 +80,18 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                             } else {
                                 $seqContent = $memData['content_seq'] + 1;
                             }
-
+                            //
                             $checkSeqOnToday = $this->dblog->query("SELECT * FROM tb_push_today WHERE shortcode = '" . $memData['shortcode'] . "' AND msisdn = '" . $memData['msisdn'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $memData['content_seq'] . "'");
                             if ($checkSeqOnToday->numRows() == 0 || empty($checkSeqOnToday->numRows())) {
-
-                                $checkSeqOnDate = $this->dblog->query("SELECT * FROM tb_push_$tbDate WHERE shortcode = '" . $memData['shortcode'] . "' AND msisdn = '" . $memData['msisdn'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $memData['content_seq'] . "'");
-                                if ($checkSeqOnDate->numRows() == 0 || empty($checkSeqOnDate->numRows())) {
-
-                                    $callContent = $this->db->query("SELECT * FROM tb_apps_content WHERE id_app = '" . $memData['id_app'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $seqContent . "'");
-                                    $contentDate = $callContent->fetchAll();
-
-                                    foreach ($contentDate as $cntent) {
-                                        // SessionID
+                                $callContent = $this->db->query("SELECT * FROM tb_apps_content WHERE id_app = '" . $memData['id_app'] . "' AND keyword = '" . $memData['keyword'] . "' AND content_number = '" . $seqContent . "'");
+                                if ($callContent->numRows() > 0) {
+                                    foreach ($callContent->fetchAll() as $cntent) {
+                                        //SessionID
                                         $sessionid = rand(1, 99999999);
                                         //SessionDate
                                         $sessionDate = date("Y-m-d h:i:s");
 
                                         $contentPush = $memData['telco'] . "|" . $memData['shortcode'] . "|" . $memData['msisdn'] . "|" . $appConfData['id_app'] . "|" . $memData['keyword'] . "|DAILY PUSH " . strtoupper($memData['keyword']) . "||" . $nowDate . "|" . $sessionid . "|" . $sessionDate . "|dailypush|" . $cntent['content_number'] . "|" . $cntent['content_field'] . "|1|push|" . $appConfData['cost_push'] . "|1|PUSH;IOD;" . strtoupper($memData['keyword']) . ";DAILYPUSH";
-
                                         $pushTelco = $pushFolder . '/' . $memData['telco'] . '/push';
 
                                         if (!file_exists($pushTelco)) {
@@ -111,14 +105,18 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                                         if ($createFilePush) {
                                             $fwPush = fwrite($createFilePush, $contentPush);
                                             if ($fwPush) {
-                                                echo date('Y-m-d h:i:s') . " : Create daily push file IF Non-Numeric success \n";
+                                                echo date('Y-m-d h:i:s') . " : Create content $seqContent daily push file IF Date Non-Numeric success \n";
                                             }
                                         }
+                                    }
+                                } else {
+                                    $checkContent = $this->db->query("SELECT MIN(content_number) AS cMin, MAX(content_number) AS cMax FROM tb_apps_content WHERE id_app = '" . $memData['id_app'] . "' AND keyword = '" . $memData['keyword'] . "'");
+                                    foreach ($callContent->fetchAll() as $valCntn) {
+                                        $seqContent = rand($valCntn['cMin'], $valCntn['cMax']);
                                     }
                                 }
                             }
                         }
-                        // Member data + Content Data
                     }
                 }
             }

@@ -46,11 +46,9 @@ class DrTask extends \Phalcon\CLI\Task {
                                 $checkQueryToday = "SELECT id_push FROM tb_push_today WHERE telco = '$expldData[0]' AND shortcode = '$expldData[1]' AND msisdn = '$expldData[2]' AND trx_id = '$expldData[3]'";
                                 $resultToday = $this->dblog->query($checkQueryToday);
                                 if ($resultToday->numRows() == 0 || empty($resultToday->numRows())) {
-
                                     $checkQueryDate = "SELECT id_push FROM tb_push_$tbDate WHERE telco = '$expldData[0]' AND shortcode = '$expldData[1]' AND msisdn = '$expldData[2]' AND trx_id = '$expldData[3]'";
                                     $resultDate = $this->dblog->query($checkQueryDate);
                                     if ($resultDate->numRows() > 0 || !empty($resultDate->numRows())) {
-
                                         $drLog = new TbDrToday();
                                         $drLog->assign(array(
                                             'telco' => $expldData[0],
@@ -75,7 +73,9 @@ class DrTask extends \Phalcon\CLI\Task {
                                                 }
                                             }
                                         }
-                                    } // Data tidak / belum ada
+                                    } else {
+                                        echo date('Y-m-d h:i:s') . " : Error Pada DR pencaria content push untuk di update \n";
+                                    }
                                 } else {
                                     $drLog = new TbDrToday();
                                     $drLog->assign(array(
