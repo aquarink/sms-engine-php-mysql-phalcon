@@ -62,9 +62,9 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                                         }
                                     }
                                 } else {
-                                    $checkContent = $this->db->query("SELECT MIN(content_number) AS cMin, MAX(content_number) AS cMax FROM tb_apps_content WHERE id_app = '" . $memData['id_app'] . "' AND keyword = '" . $memData['keyword'] . "'");
+                                    $checkContent = $this->db->query("SELECT content_number FROM tb_apps_content WHERE 1 ORDER BY RAND() LIMIT 1");
                                     foreach ($callContent->fetchAll() as $valCntn) {
-                                        $seqContent = rand($valCntn['cMin'], $valCntn['cMax']);
+                                        $seqContent = rand($valCntn['content_number']);
                                     }
                                 }
                             }
@@ -110,9 +110,9 @@ class SchedulerpushTask extends \Phalcon\CLI\Task {
                                         }
                                     }
                                 } else {
-                                    $checkContent = $this->db->query("SELECT MIN(content_number) AS cMin, MAX(content_number) AS cMax FROM tb_apps_content WHERE id_app = '" . $memData['id_app'] . "' AND keyword = '" . $memData['keyword'] . "'");
+                                    $checkContent = $this->db->query("SELECT content_number FROM tb_apps_content WHERE 1 ORDER BY RAND() LIMIT 1");
                                     foreach ($callContent->fetchAll() as $valCntn) {
-                                        $seqContent = rand($valCntn['cMin'], $valCntn['cMax']);
+                                        $seqContent = rand($valCntn['content_number']);
                                     }
                                 }
                             }
